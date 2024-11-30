@@ -1,7 +1,7 @@
 {
-  "name": "Black BULL",
-  "description": "The Black Bull",
-  "short_name": "Black Bull",
+  "name": "My App",
+  "description": "My App description",
+  "short_name": "My App",
   "icons": [
     {
       "src": "/favicon-72x72.png",
