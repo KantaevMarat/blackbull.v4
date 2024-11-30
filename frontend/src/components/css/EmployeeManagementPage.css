@@ -1,0 +1,69 @@
+/* frontend/src/components/css/EmployeeManagementPage.css */
+/* Стиль для страницы управления рабочими */
+.employee-management-page {
+  padding: 24px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* Кастомные стили для карточек */
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ant-card-meta-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Кастомные стили для модальных окон */
+.ant-modal-content {
+  border-radius: 8px;
+}
+
+/* Кастомные стили для форм */
+.ant-form-item {
+  margin-bottom: 16px;
+}
+
+/* Кастомные стили для кнопок */
+.ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-btn-danger {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+}
+
+.ant-btn-primary:hover {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.ant-btn-danger:hover {
+  background-color: #ff7875;
+  border-color: #ff7875;
+}
+
+/* Адаптивные стили для карточек */
+@media (max-width: 768px) {
+  .employee-management-page {
+    padding: 16px;
+  }
+
+  .ant-card {
+    margin-bottom: 16px;
+  }
+
+  .ant-input {
+    width: 100%;
+  }
+
+  .ant-btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}

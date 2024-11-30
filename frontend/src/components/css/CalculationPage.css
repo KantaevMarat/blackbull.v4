@@ -1,0 +1,109 @@
+/* src/css/CalculationPage.css */
+
+/* Контейнер страницы */
+.calculation-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Заголовок страницы */
+.main-title {
+  text-align: center;
+  margin-top: 50px; /* Отступ сверху 50px */
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+
+/* Центрирование загрузочного спиннера */
+.spin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Высота экрана */
+}
+
+/* Стиль для ECharts диаграммы */
+.echarts-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  width: 100%;
+  position: relative; /* Для корректного позиционирования тултипов */
+  overflow: visible; /* Позволяет тултипам отображаться вне контейнера */
+}
+
+/* История расчетов */
+.history-section .ant-list-item {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-item .ant-typography-success {
+  color: #52c41a !important;
+}
+
+.history-item .ant-typography-danger {
+  color: #f5222d !important;
+}
+
+/* Фильтр по датам */
+.date-filter-row {
+  width: 100%;
+}
+
+/* Кнопки "+" и "-" */
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+/* Адаптивные стили */
+@media (max-width: 767px) {
+  .calculation-page {
+    padding: 16px;
+  }
+
+  .add-button {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  /* Центрирование контента на мобильных устройствах */
+  .ant-card {
+    text-align: center;
+  }
+
+  .ant-descriptions-item-label {
+    text-align: left !important;
+  }
+
+  /* Обеспечение отображения тултипов поверх других элементов */
+  .echarts-container {
+    position: relative;
+    overflow: visible;
+  }
+
+  .echarts-container .react-epic-tooltip {
+    z-index: 9999; /* Высокий z-index для отображения поверх других элементов */
+  }
+}
+
+/* Дополнительные стили для тултипов ECharts */
+.echarts-tooltip {
+  z-index: 9999; /* Убедимся, что тултипы находятся поверх других элементов */
+}

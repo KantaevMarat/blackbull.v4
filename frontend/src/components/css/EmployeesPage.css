@@ -1,0 +1,106 @@
+.employees-page {
+  max-width: 1100px;
+  margin: 50px auto;
+  padding: 40px;
+  background-color: #fafafa;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  font-family: 'Montserrat', sans-serif;
+}
+
+h1 {
+  font-size: 2.6rem;
+  color: #2d2d2d;
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.employees-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.employee-card {
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.employee-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.employee-card h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.employee-card p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.employee-card p strong {
+  color: #34312d;
+  font-weight: 600;
+}
+
+.details-button {
+  display: inline-block;
+  background-color: #34312d;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.details-button:hover {
+  background-color: #483d8b;
+  transform: translateY(-2px);
+}
+
+.details-button:active {
+  background-color: #2d1f69;
+}
+
+.details-button span {
+  display: inline-block;
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+.details-button:hover span {
+  transform: translateX(5px);
+}
+
+/* Мобильные стили */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.2rem;
+  }
+  .employee-card {
+    padding: 20px;
+  }
+  .employee-card h2 {
+    font-size: 1.6rem;
+  }
+  .employee-card p {
+    font-size: 1rem;
+  }
+  .details-button {
+    padding: 10px 15px;
+  }
+}

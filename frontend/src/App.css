@@ -1,0 +1,35 @@
+/* src/App.css */
+
+.App {
+  display: flex;
+  background-color: #f3f3f4;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif, 'Poppins', 'Inter';
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.content {
+  flex: 1;
+  margin-left: 60px; /* Width of the collapsed sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+/* When the sidebar is open, increase content margin */
+.sidebar-open .content {
+  margin-left: 200px; /* Width of the expanded sidebar */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+  }
+
+  .sidebar-open .content {
+    margin-left: 180px;
+  }
+}

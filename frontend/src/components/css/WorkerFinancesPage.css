@@ -1,0 +1,362 @@
+/* src/components/css/WorkerFinancesPage.css */
+
+/* Общие стили */
+.worker-finances-content {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  background-color: #f0f2f5; /* Светло-серый фон */
+  border-radius: 12px;
+}
+
+/* Стили для заголовка */
+.page-title {
+  color: #001529; /* Тёмно-синий цвет */
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 30px;
+  margin-top: 50px;
+}
+
+/* Стили для карточек статистики */
+.stat-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #ffffff;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .ant-card-body {
+  padding: 20px;
+}
+
+.stat-card .ant-statistic-title {
+  font-size: 1rem;
+  color: #595959;
+}
+
+.stat-card .ant-statistic-content-value {
+  font-size: 2rem;
+}
+
+/* Стили для кнопок */
+.ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.ant-btn-danger {
+  background-color: #ff4d4f;
+  border-color: #ff4d4f;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.ant-btn {
+  height: 45px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.ant-btn:hover {
+  opacity: 0.9;
+}
+
+.transaction-button .ant-btn {
+  height: 45px;
+}
+
+.ant-btn-block {
+  border-radius: 8px;
+}
+
+/* Стили для таблицы */
+.ant-table {
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: bold;
+  color: #001529;
+  font-size: 0.95rem;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 14px;
+  font-size: 0.9rem;
+}
+
+.ant-table-cell {
+  font-size: 0.9rem;
+}
+
+/* Стили для формы транзакций */
+.transaction-form {
+  padding: 16px;
+}
+
+.transaction-form .ant-form-item {
+  margin-bottom: 16px;
+}
+
+.transaction-form .ant-input,
+.transaction-form .ant-select-selector {
+  height: 45px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.transaction-form .ant-input-suffix {
+  margin-left: 6px;
+  font-size: 1rem;
+}
+
+.transaction-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.transaction-button .ant-btn {
+  width: 100%;
+}
+
+/* Стили для контейнера диаграммы */
+/* Стили для контейнера диаграммы */
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px; /* Максимальная ширина контейнера */
+  margin: 0 auto; /* Центрирование контейнера */
+  overflow: hidden; /* Убедитесь, что содержимое не выходит за пределы контейнера */
+}
+
+.chart-content {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%; /* Сделаем круг */
+}
+
+/* Опционально, чтобы исправить искажения */
+.chart-content canvas {
+  display: block; /* Убирает лишние пробелы */
+  width: 100% !important; /* Установить ширину 100% */
+  height: 100% !important; /* Установить высоту 100% */
+}
+
+.chart-container::before {
+  content: '';
+  display: block;
+  padding-top: 100%; /* Соотношение сторон 1:1 */
+}
+
+
+
+/* Стили для карточек транзакций на мобильных устройствах */
+.transaction-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.transaction-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  background-color: #ffffff;
+  transition: transform 0.3s ease;
+}
+
+.transaction-card:hover {
+  transform: translateY(-5px);
+}
+
+.transaction-card .card-header {
+  display: flex;
+  align-items: center;
+}
+
+.transaction-card .transaction-info {
+  margin-left: 10px;
+}
+
+.transaction-card .transaction-info strong {
+  font-size: 1rem;
+}
+
+.transaction-card .description-text {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.transaction-card .card-content {
+  margin-top: 12px;
+}
+
+.transaction-card .card-content p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.card-date,
+.card-amount {
+  font-size: 0.9rem;
+}
+
+/* Центрирование спиннера при загрузке */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Отступы между карточками */
+.ant-card {
+  margin-bottom: 30px;
+  border-radius: 12px;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .worker-finances-content {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 992px) {
+  .stat-card .ant-statistic-content-value {
+    font-size: 1.8rem;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 0.9rem;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+
+  .transaction-card .transaction-info strong {
+    font-size: 0.95rem;
+  }
+
+  .transaction-card .description-text {
+    font-size: 0.85rem;
+  }
+
+  .transaction-card .card-content p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .worker-finances-content {
+    padding: 10px;
+  }
+
+  .stat-card .ant-statistic-content-value {
+    font-size: 1.6rem;
+  }
+
+  .ant-btn {
+    font-size: 0.9rem;
+    height: 42px;
+  }
+
+  .ant-input,
+  .ant-select-selector {
+    height: 42px;
+    font-size: 0.9rem;
+  }
+
+  .transaction-button .ant-btn {
+    height: 42px;
+  }
+
+  .transaction-form .ant-form-item {
+    margin-bottom: 14px;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 0.85rem;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+
+  .transaction-card .transaction-info strong {
+    font-size: 0.9rem;
+  }
+
+  .transaction-card .description-text {
+    font-size: 0.8rem;
+  }
+
+  .transaction-card .card-content p {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .ant-btn {
+    font-size: 0.85rem;
+    height: 40px;
+  }
+
+  .ant-input,
+  .ant-select-selector {
+    height: 40px;
+    font-size: 0.85rem;
+  }
+
+  .transaction-button .ant-btn {
+    height: 40px;
+  }
+
+  .transaction-form .ant-form-item {
+    margin-bottom: 12px;
+  }
+
+  .ant-table-thead > tr > th {
+    font-size: 0.8rem;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 8px;
+    font-size: 0.75rem;
+  }
+
+  .transaction-card .transaction-info strong {
+    font-size: 0.85rem;
+  }
+
+  .transaction-card .description-text {
+    font-size: 0.75rem;
+  }
+
+  .transaction-card .card-content p {
+    font-size: 0.75rem;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+  }
+}

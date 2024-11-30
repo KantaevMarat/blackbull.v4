@@ -1,0 +1,80 @@
+/* src/components/css/RequestForm.css */
+
+/* Общие стили для формы */
+.request-form {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Стили заголовка формы */
+.form-title {
+  text-align: center;
+  color: #3f51b5;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* Стили элементов формы */
+.ant-form-item {
+  margin-bottom: 16px;
+}
+
+.ant-input,
+.ant-picker {
+  height: 45px;
+  border-radius: 8px;
+}
+
+.ant-input-textarea {
+  border-radius: 8px;
+}
+
+/* Стили для кнопки отправки */
+.submit-button {
+  width: 100%;
+  background-image: none !important;
+  box-shadow: none !important;
+  height: 50px;
+  border-radius: 8px;
+  background-color: #3f51b5;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #2f41a5;
+}
+
+/* Стили для кастомного попапа выбора даты */
+.custom-date-picker-popup {
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 600px) {
+  .request-form {
+    padding: 20px;
+    margin: 20px auto;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+
+  .submit-button {
+    height: 45px;
+    font-size: 1rem;
+  }
+}

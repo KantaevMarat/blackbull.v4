@@ -1,0 +1,152 @@
+/* Основной контейнер для страницы логина */
+.login-container {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: #ffffff; /* Белый фон */
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Заголовок */
+.login-container .ant-typography {
+  color: #333333; /* Темно-серый текст */
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Форма логина */
+.login-form {
+  margin-top: 20px;
+}
+
+/* Поля для ввода данных */
+.login-form .ant-input,
+.login-form .ant-input-password {
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: #f5f7fa; /* Светлый фон поля ввода */
+  border: 1px solid #dcdcdc;
+  transition: all 0.3s ease;
+}
+
+/* Эффект фокуса на поле ввода */
+.login-form .ant-input:focus,
+.login-form .ant-input-password:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+}
+
+/* Кнопка логина */
+.login-button {
+  margin-top: 20px;
+  padding: 12px 0;
+  background-color: #4a90e2; /* Синий основной цвет */
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Эффект при наведении на кнопку */
+.login-button:hover {
+  background-color: #3a78c2;
+  transform: translateY(-2px);
+}
+
+/* Эффект нажатия на кнопку */
+.login-button:active {
+  transform: scale(0.98);
+}
+
+/* Кнопка для переключения между страницами */
+.switch-button {
+  margin-top: 15px;
+  color: #4a90e2;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+/* Эффект при наведении на кнопку переключения */
+.switch-button:hover {
+  color: #3a78c2;
+  transform: translateY(-2px);
+}
+
+/* Контейнер для кнопки "Назад" на десктопе */
+.back-button-desktop {
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+/* Контейнер для кнопки "Назад" на мобильных устройствах */
+.back-button-mobile-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+/* Контейнер для загрузки */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Контейнер для карточек на мобильных устройствах */
+.mobile-cards-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Сообщение об отсутствии заявки */
+.not-found-title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #dc3545; /* Красный цвет для ошибок */
+  margin-top: 50px;
+}
+
+/* Настройка адаптивности */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 20px;
+  }
+
+  .login-button,
+  .switch-button {
+    width: 100%;
+  }
+
+  .login-button {
+    margin-bottom: 15px;
+  }
+
+  /* Скрываем кнопку "Назад" для десктопа на мобильных устройствах */
+  .back-button-desktop {
+    display: none;
+  }
+
+  /* Настройки для карточек на мобильных устройствах */
+  .mobile-cards-container .details-card {
+    margin-bottom: 15px;
+  }
+
+  /* Изменение размеров текста для мобильных устройств */
+  .login-container .ant-typography {
+    font-size: 1rem;
+  }
+
+  .login-form .ant-input,
+  .login-form .ant-input-password {
+    font-size: 0.9rem;
+  }
+
+  .switch-button {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,127 @@
+/* src/components/css/CarHistory.css */
+
+/* Сброс стилей для предотвращения переполнения */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Стили для контейнера */
+.car-history-container {
+  width: 100%;
+  background-color: #fff;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+}
+
+/* Стили для поиска и фильтра */
+.search-filter-container {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.search-filter-space {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .search-filter-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .search-filter-space {
+    width: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+  }
+}
+
+/* Стили для карточек на мобильных устройствах */
+.car-card {
+  width: 100%;
+  max-width: 800px; /* Ограничиваем максимальную ширину карточек */
+  margin-bottom: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  word-wrap: break-word;
+  word-break: break-word;
+  margin: 0 auto; /* Центрируем карточки */
+}
+
+.car-card .card-header {
+  display: flex;
+  align-items: center;
+}
+
+.car-card .car-info {
+  margin-left: 12px;
+  word-break: break-word;
+}
+
+.car-card .car-info strong {
+  font-size: 1.1rem;
+}
+
+.car-card .card-content {
+  margin-top: 12px;
+}
+
+.car-card .card-content p {
+  margin: 4px 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .car-history-container .ant-space {
+    width: 100%;
+  }
+
+  .car-history-container .ant-input,
+  .car-history-container .ant-select {
+    width: 100% !important;
+  }
+
+  .car-history-container .ant-list {
+    width: 100%;
+  }
+
+  .car-history-container .ant-card {
+    width: 100%;
+  }
+
+  .car-history-container .ant-table {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .car-card .car-info strong {
+    font-size: 1rem;
+  }
+
+  .car-card .card-content p {
+    font-size: 0.9rem;
+  }
+
+  .ant-typography {
+    font-size: 1rem;
+  }
+}

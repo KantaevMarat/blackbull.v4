@@ -1,0 +1,40 @@
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - TELEGRAM_BOT_TOKEN=8170038227:AAEyllxF67-cEEL-CNCBo7q4dUuuOlLleS0
+      - REACT_URL_DOMAIN = https://theblackbull.store/
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    restart: always
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    restart: always
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "8080:80"
+      - "8443:443"
+    networks:
+      - app-network
+
+

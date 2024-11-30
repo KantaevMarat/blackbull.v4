@@ -1,0 +1,172 @@
+/* src/components/css/ReportPage.css */
+
+/* Общие стили */
+.ant-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ant-card-head {
+  background-color: #f0f2f5;
+}
+
+.ant-card-head-title {
+  font-weight: bold;
+}
+
+.ant-card-extra {
+  font-size: 20px;
+  color: #1890ff;
+}
+
+.ant-statistic-content-value {
+  font-size: 28px;
+}
+
+.ant-statistic .anticon {
+  margin-right: 8px;
+}
+
+.ant-select,
+.ant-picker {
+  border-radius: 8px;
+}
+
+.ant-select-selector {
+  border-radius: 8px !important;
+}
+
+.ant-select-item-option-content {
+  display: flex;
+  align-items: center;
+}
+
+.ant-select-item-option-content .ant-avatar {
+  margin-right: 8px;
+}
+
+.ant-table {
+  border-radius: 12px;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: bold;
+}
+
+.ant-table-tbody > tr > td {
+  padding: 16px;
+}
+
+/* Стили для карточек транзакций */
+.transaction-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.transaction-card {
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+}
+
+.transaction-card p {
+  margin: 0 0 8px 0;
+}
+
+.transaction-card p strong {
+  color: #001529;
+}
+
+.transaction-card p .anticon {
+  margin-right: 8px;
+  color: #1890ff;
+}
+
+/* Центрирование спиннера при загрузке */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .ant-statistic-content-value {
+    font-size: 24px;
+  }
+
+  .ant-card {
+    margin-bottom: 20px;
+  }
+
+  .ant-statistic-title {
+    font-size: 14px;
+  }
+
+  .ant-statistic-content {
+    font-size: 20px;
+  }
+
+  .ant-card-head-title {
+    font-size: 16px;
+  }
+
+  .ant-card-extra {
+    font-size: 16px;
+  }
+
+  .ant-select,
+  .ant-picker {
+    width: 100% !important;
+  }
+
+  .ant-picker {
+    font-size: 14px;
+  }
+
+  .ant-select-selection-item {
+    font-size: 14px;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .ant-table {
+    font-size: 12px;
+  }
+
+  /* Стили для графиков на мобильных устройствах */
+  .echarts-for-react {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .request-title {
+    font-size: 1.2rem;
+  }
+
+  .request-description {
+    font-size: 0.95rem;
+  }
+
+  .amount-text {
+    font-size: 1.3rem;
+  }
+
+  .ant-card-extra {
+    font-size: 14px;
+  }
+
+  .ant-select,
+  .ant-picker {
+    font-size: 14px;
+  }
+}

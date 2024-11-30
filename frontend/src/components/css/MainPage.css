@@ -1,0 +1,243 @@
+/* src/components/css/MainPage.css */
+
+/* Глобальная установка box-sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Общие стили для основного макета */
+.main-layout {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  overflow-x: hidden; /* Предотвращение горизонтальной прокрутки */
+}
+
+.main-page-content {
+  padding: 24px;
+  max-width: 1200px; /* Ограничение максимальной ширины */
+  width: 100%; /* Установка ширины 100% */
+  margin: 0 auto; /* Центрирование по горизонтали */
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden; /* Предотвращение переполнения */
+  display: flex; /* Использование Flexbox для выравнивания */
+  flex-direction: column;
+  align-items: center; /* Центрирование содержимого по горизонтали */
+}
+
+/* Wrapper */
+.wrapper {
+  width: 100%;
+  max-width: 1200px; /* Совпадает с max-width у .main-page-content */
+  margin: 0 auto; /* Центрирование по горизонтали */
+  padding: 0 16px; /* Немного горизонтального паддинга */
+}
+
+/* Заголовок страницы */
+.main-page-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 2rem;
+  margin-top: 50px;
+  color: #001529;
+}
+
+/* Карточки статистики */
+.stat-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #ffffff;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .ant-card-body {
+  padding: 20px;
+}
+
+.stat-card .ant-statistic-title {
+  font-size: 1rem;
+  color: #595959;
+}
+
+.stat-card .ant-statistic-content-value {
+  font-size: 2rem;
+  color: #000;
+}
+
+/* Стили для круговой и линейной диаграмм */
+.chart-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.chart-container {
+  width: 100%; /* Установка ширины 100% */
+  max-width: 100%; /* Ограничение максимальной ширины */
+  overflow: hidden !important; /* Предотвращение переполнения */
+  padding: 0 !important; /* Удаление внутреннего отступа */
+  margin: 0 !important; /* Удаление внешнего отступа */
+}
+
+/* Удаление любых псевдоэлементов */
+.chart-container::before,
+.chart-container::after {
+  content: none !important; /* Полностью отключает псевдоэлементы */
+  display: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Секция истории автомобилей */
+.section-divider {
+  margin-top: 40px;
+  margin-bottom: 24px;
+}
+
+/* Поисковая строка и фильтры */
+.search-filter-container {
+  margin-bottom: 16px;
+}
+
+/* Карточки истории автомобилей */
+.car-history-card {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  background-color: #ffffff;
+  transition: transform 0.3s ease;
+}
+
+.car-history-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Адаптивные стили */
+@media (max-width: 767px) {
+  /* Заголовок страницы */
+  .main-page-title {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+
+  /* Карточки статистики */
+  .stat-card {
+    margin-bottom: 16px;
+  }
+
+  /* Секция истории автомобилей */
+  .section-divider {
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }
+
+  /* Поисковая строка и фильтры */
+  .search-filter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input,
+  .filter-select {
+    width: 100% !important;
+    margin-bottom: 16px;
+  }
+
+  /* Изменение размеров шрифтов в фильтрах */
+  .search-input input,
+  .filter-select .ant-select-selector {
+    font-size: 0.9rem;
+  }
+
+  /* Изменение размеров шрифтов в диаграммах */
+  .ant-legend-item text {
+    font-size: 10px !important;
+  }
+
+  .chart-card {
+    padding: 15px;
+  }
+
+  .chart-container {
+    padding: 10px;
+  }
+
+  .ant-statistic-content-value {
+    font-size: 1.5rem;
+    color: #000; /* Черный цвет */
+  }
+
+  .ant-axis-label {
+    font-size: 10px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Поисковая строка и фильтры */
+  .search-filter-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .search-input,
+  .filter-select {
+    width: 200px;
+  }
+}
+
+/* Стили для загрузки */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Отступы между карточками */
+.ant-card {
+  margin-bottom: 30px;
+  border-radius: 12px;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .main-page-content {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 992px) {
+  .stat-card .ant-statistic-content-value {
+    font-size: 1.8rem;
+  }
+
+  .car-history-card .ant-typography {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .ant-input,
+  .ant-select-selector {
+    height: 40px;
+    font-size: 0.85rem;
+  }
+
+  .search-input,
+  .filter-select {
+    width: 100% !important;
+    margin-bottom: 16px;
+  }
+
+  .main-page-title {
+    font-size: 1.8rem;
+  }
+}

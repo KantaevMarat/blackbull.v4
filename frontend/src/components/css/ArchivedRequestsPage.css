@@ -1,0 +1,186 @@
+/* Контейнер для всех элементов */
+.archived-requests-container {
+  width: 100%;
+  padding: 30px;
+  background: #f5f7fa; /* Фон контейнера */
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden; /* Предотвращает переполнение */
+}
+
+/* Заголовок */
+.archived-title {
+  text-align: center;
+  color: #34312d;
+  margin-top: 50px;
+  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-size: 32px; /* Базовый размер */
+}
+
+/* Контейнер для спиннера */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+/* Контейнер для сообщения об отсутствии заявок */
+.no-requests-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.no-requests-text {
+  font-size: 20px;
+  color: #dc3545;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+/* Таблица */
+.archived-requests-table {
+  width: 100%;
+  margin-bottom: 30px;
+  overflow-x: auto; /* Добавляет горизонтальную прокрутку при необходимости */
+}
+
+/* Карточки */
+.archived-requests-cards {
+  display: none; /* По умолчанию скрыты, показываются только на мобильных */
+  margin-top: 20px;
+}
+
+.request-card {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 20px; /* Уменьшено с 25px */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+}
+
+.request-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Текст в таблице */
+.table-text {
+  font-size: 14px; /* Уменьшено с 16px */
+}
+
+/* Теги работников */
+.worker-tag {
+  font-size: 12px; /* Уменьшено с 14px */
+}
+
+/* Заголовок карточки */
+.card-title {
+  font-size: 18px; /* Уменьшено с 22px */
+}
+
+/* Текст в карточках */
+.card-text {
+  font-size: 14px;
+  max-width: 100%;      /* Элемент будет иметь максимальную ширину */
+  word-wrap: break-word; /* Переносит слова на новую строку, если они не помещаются */
+  word-break: break-all; /* Принудительно разрывает длинные слова, если нужно */
+  white-space: normal;   /* Позволяет тексту нормально переноситься по строкам *//* Уменьшено с 16px */
+}
+
+/* Кнопка "Подробнее" */
+/* Кнопка "Подробнее" */
+.details-button {
+  border: none !important; /* Убираем обводку */
+  box-shadow: none !important; /* Убираем тень */
+  background: transparent !important; /* Убираем фон */
+  padding: 0; /* Убираем внутренние отступы */
+  cursor: pointer; /* Указатель для клика */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; /* Размер кнопки */
+  height: 24px; /* Размер кнопки */
+  border-radius: 50%; /* Делаем кнопку круглой */
+  margin-left: auto; /* Выровняем кнопку справа */
+  transition: none; /* Убираем анимации */
+}
+
+.details-button .anticon {
+  font-size: 16px; /* Размер иконки */
+  color: #1890ff; /* Цвет иконки */
+}
+
+.details-button:hover,
+.details-button:focus {
+  background-color: transparent; /* Убираем фон при наведении */
+  box-shadow: none; /* Убираем тень при наведении */
+  outline: none; /* Убираем фокус */
+  transform: none; /* Убираем трансформации при наведении */
+}
+
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .archived-requests-container {
+    padding: 20px;
+  }
+
+  .archived-title {
+    font-size: 24px; /* Уменьшено с 32px */
+  }
+
+  .table-text {
+    font-size: 12px; /* Дополнительное уменьшение */
+  }
+
+  .worker-tag {
+    font-size: 10px; /* Дополнительное уменьшение */
+  }
+
+  .card-title {
+    font-size: 16px; /* Уменьшено с 18px */
+  }
+
+  .card-text {
+    font-size: 12px;
+    max-width: 100%;      /* Элемент будет иметь максимальную ширину */
+    word-wrap: break-word; /* Переносит слова на новую строку, если они не помещаются */
+    word-break: break-all; /* Принудительно разрывает длинные слова, если нужно */
+    white-space: normal;   /* Позволяет тексту нормально переноситься по строкам */ /* Уменьшено с 14px */
+  }
+
+  .details-button {
+    width: 28px; /* Уменьшено с 32px */
+    height: 28px; /* Уменьшено с 32px */
+  }
+
+  .details-button .anticon {
+    font-size: 14px; /* Уменьшено с 16px */
+    color: #1890ff; /* Цвет иконки */
+  }
+
+  .archived-requests-table {
+    display: none; /* Прячем таблицу на мобильных */
+  }
+
+  .archived-requests-cards {
+    display: block; /* Показываем карточки на мобильных */
+  }
+
+  .request-card {
+    padding: 15px; /* Уменьшено с 20px */
+  }
+}
+
+@media (min-width: 769px) {
+  .archived-requests-cards {
+    display: none; /* Прячем карточки на десктопе */
+  }
+}

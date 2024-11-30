@@ -1,0 +1,89 @@
+/* src/css/ArchivedRequestDetailsPage.css */
+
+.details-container {
+  padding: 40px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Montserrat', sans-serif;
+  background: #f0f2f5; /* Цвет фона, соответствующий Ant Design */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.request-title {
+  text-align: center;
+  color: #1890ff; /* Цвет заголовка соответствует Ant Design */
+  margin-bottom: 25px;
+  font-size: 2.5rem;
+}
+
+.details-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.back-button-desktop {
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.back-button-mobile-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.not-found-title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #dc3545; /* Красный цвет для ошибок */
+  margin-top: 50px;
+}
+
+/* Контейнер для карточек на мобильных устройствах */
+.mobile-cards-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 768px) {
+  .details-container {
+    padding: 20px 10px;
+  }
+
+  .request-title {
+    font-size: 2rem;
+  }
+
+  .details-card {
+    padding: 15px;
+  }
+
+  .ant-descriptions-item-label {
+    font-size: 0.9rem;
+  }
+
+  .ant-descriptions-item-content {
+    font-size: 0.9rem;
+  }
+
+  .back-button-desktop {
+    display: none; /* Скрываем кнопку "Назад" для десктопа на мобильных устройствах */
+  }
+
+  .back-button-mobile-container {
+    justify-content: flex-start;
+  }
+
+  .mobile-cards-container .details-card {
+    margin-bottom: 15px; /* Уменьшаем отступ между карточками на мобильных */
+  }
+
+  .mobile-cards-container .ant-typography {
+    font-size: 1rem;
+  }
+}

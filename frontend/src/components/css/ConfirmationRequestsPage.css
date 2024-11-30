@@ -1,0 +1,84 @@
+/* src/css/ConfirmationRequestsPage.css */
+
+/* Контейнер для подтверждения заявок */
+.confirmation-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 24px 24px 24px; /* Отступ сверху 50px */
+  text-align: center; /* Центрирование текста */
+}
+
+/* Заголовок */
+.main-title {
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+
+/* Заголовок баланса */
+.balance-title {
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+/* Карточка без заявок */
+.no-requests-card {
+  text-align: center;
+  padding: 40px;
+  border: 1px dashed #d9d9d9;
+  background-color: #fafafa;
+}
+
+.no-requests-icon {
+  font-size: 48px;
+  color: #faad14;
+}
+
+.no-requests-text {
+  display: block;
+  margin-top: 16px;
+  font-size: 16px;
+}
+
+/* Центрирование Spin */
+.spin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Высота экрана */
+}
+
+/* Стиль для карточек подтверждения */
+.confirmation-card {
+  transition: box-shadow 0.3s;
+}
+
+.confirmation-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Кнопка подтверждения */
+.confirm-button {
+  width: 100%; /* На мобильных кнопка занимает всю ширину */
+  text-align: center;
+}
+
+/* Адаптивные стили для кнопок */
+@media (min-width: 768px) {
+  .confirm-button {
+    width: auto; /* На десктопах кнопка занимает минимальную ширину */
+  }
+}
+
+/* Корректное расположение колонок */
+.request-col {
+  display: flex;
+  justify-content: center;
+}
+
+/* Улучшение внешнего вида кнопок на мобильных */
+@media (max-width: 767px) {
+  .ant-btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}

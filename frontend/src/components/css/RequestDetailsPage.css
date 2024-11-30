@@ -1,0 +1,41 @@
+/* src/css/RequestDetailsPage.css */
+
+/* Общее оформление карточек */
+.full-height-card {
+  height: 100%;
+}
+
+/* Обработка длинного описания */
+.description-text {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Выделение выбранных работников */
+.worker-item.selected {
+  background-color: #e6f7ff;
+  border: 2px solid #1890ff;
+}
+
+/* Финансовые записи */
+.financial-history .ant-list-item {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Добавление отступов */
+.form-inline .ant-form-item {
+  margin-right: 16px;
+  margin-bottom: 16px;
+}
+
+/* Улучшение отображения чекбоксов внутри карточек работников */
+.ant-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Улучшение отображения тегов внутри карточек работников */
+.worker-item .ant-tag {
+  margin-top: 8px;
+}
