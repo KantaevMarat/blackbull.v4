@@ -34,18 +34,21 @@ import {
   Row,
   Col,
   Divider,
+  InputNumber,
 } from 'antd';
 import {
   CloseOutlined,
   CheckOutlined,
   PlusOutlined,
   ExclamationCircleOutlined,
+  EditOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
 import LoadingSpinner from '../LoadingSpinner';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import 'antd/dist/reset.css'; // Используйте reset.css для чистого стиля Ant Design
-import '../css/RequestDetailsPage.css'; // Для дополнительных пользовательских стилей
+import 'antd/dist/reset.css'; 
+import '../css/RequestDetailsPage.css';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -70,6 +73,10 @@ function RequestDetailsPage() {
   const [companyShare, setCompanyShare] = useState(0);
   const [workerShare, setWorkerShare] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
+
+  // Состояние для редактирования ставки работника
+  const [editingWorkerId, setEditingWorkerId] = useState(null);
+  const [editingWorkerRate, setEditingWorkerRate] = useState(null);
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -136,7 +143,7 @@ function RequestDetailsPage() {
         const fetchedFinancials = financialsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-          date: doc.data().date ? doc.data().date.toDate() : null, // Корректное преобразование Timestamp
+          date: doc.data().date ? doc.data().date.toDate() : null,
         }));
         setFinancials(fetchedFinancials);
 
@@ -181,16 +188,13 @@ function RequestDetailsPage() {
       return;
     }
 
-    // Суммируем процентные ставки выбранных рабочих
     const totalWorkerRate = selectedWorkers.reduce((sum, workerId) => {
       const worker = workers.find((w) => w.id === workerId);
       return sum + (worker?.rate || 0);
     }, 0);
 
-    // Доля компании — остаток от 100% после распределения среди рабочих
     const companyShare = Math.floor((netIncome * (100 - totalWorkerRate)) / 100);
 
-    // Расчет долей для каждого рабочего
     const workerShares = selectedWorkers.map((workerId) => {
       const worker = workers.find((w) => w.id === workerId);
       const rate = worker?.rate || 0;
@@ -225,7 +229,7 @@ function RequestDetailsPage() {
       type,
       amount: parseFloat(amount),
       description,
-      date: Timestamp.fromDate(new Date()), // Сохраняем как Timestamp
+      date: Timestamp.fromDate(new Date()),
     };
 
     try {
@@ -322,18 +326,15 @@ function RequestDetailsPage() {
 
   const handleCompleteOrder = async () => {
     try {
-      // Обновляем статус заявки на 'confirmation'
       await updateDoc(doc(db, 'requests', id), {
         status: 'confirmation',
       });
 
-      // Уведомляем пользователя об успешном выполнении заявки
       toast.success('Заявка успешно выполнена и отправлена на подтверждение!', {
         position: 'top-center',
         autoClose: 3000,
       });
 
-      // Перенаправляем пользователя на страницу подтверждения заявок
       navigate('/confirmations');
     } catch (error) {
       console.error('Ошибка выполнения заявки:', error);
@@ -358,6 +359,40 @@ function RequestDetailsPage() {
     });
   };
 
+  const handleEditWorkerRate = (workerId, currentRate) => {
+    setEditingWorkerId(workerId);
+    setEditingWorkerRate(currentRate);
+  };
+
+  const handleSaveWorkerRate = async (workerId) => {
+    const workerRef = doc(db, 'workers', workerId);
+
+    try {
+      await updateDoc(workerRef, {
+        rate: Number(editingWorkerRate),
+      });
+      const updatedWorkers = workers.map((w) =>
+        w.id === workerId ? { ...w, rate: Number(editingWorkerRate) } : w
+      );
+      setWorkers(updatedWorkers);
+      setEditingWorkerId(null);
+      setEditingWorkerRate(null);
+      toast.success('Ставка работника успешно обновлена!', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+
+      // Пересчитываем доли при обновлении ставки
+      calculateShares(financials);
+    } catch (error) {
+      console.error('Ошибка обновления ставки работника:', error);
+      toast.error('Произошла ошибка при обновлении ставки.', {
+        position: 'top-center',
+        autoClose: 3000,
+      });
+    }
+  };
+
   if (loading || !request) {
     return (
       <div style={{ textAlign: 'center', marginTop: '50px' }}>
@@ -375,7 +410,6 @@ function RequestDetailsPage() {
       </Title>
 
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        {/* Информация о клиенте и Управление заявкой в два столбца */}
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={12}>
             <Card title="Информация о клиенте" bordered={false}>
@@ -521,7 +555,9 @@ function RequestDetailsPage() {
                       if (startDateTime && endDateTime) {
                         try {
                           await updateDoc(doc(db, 'requests', id), {
-                            startDateTime: Timestamp.fromDate(startDateTime.toDate()),
+                            startDateTime: Timestamp.fromDate(
+                              startDateTime.toDate()
+                            ),
                             endDateTime: Timestamp.fromDate(endDateTime.toDate()),
                           });
                           setShowCalendar(false);
@@ -553,7 +589,6 @@ function RequestDetailsPage() {
           </Col>
         </Row>
 
-        {/* Назначить работников и Добавить финансовую запись в два столбца */}
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={12}>
             <Card title="Назначить работников" bordered={false}>
@@ -572,7 +607,6 @@ function RequestDetailsPage() {
                   <List.Item>
                     <Card
                       hoverable
-                      onClick={() => handleWorkerClick(worker.id)}
                       style={{
                         background: selectedWorkers.includes(worker.id)
                           ? '#e6f7ff'
@@ -588,8 +622,36 @@ function RequestDetailsPage() {
                       >
                         {worker.name}
                       </Checkbox>
-                      {worker.rate && (
-                        <Tag color="geekblue">{worker.rate}%</Tag>
+                      {worker.rate !== undefined && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {editingWorkerId === worker.id ? (
+                            <>
+                              <InputNumber
+                                min={0}
+                                max={100}
+                                value={editingWorkerRate}
+                                onChange={(value) => setEditingWorkerRate(value)}
+                                style={{ width: '60px' }}
+                              />
+                              <Button
+                                type="text"
+                                icon={<SaveOutlined style={{ color: 'green' }} />}
+                                onClick={() => handleSaveWorkerRate(worker.id)}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <Tag color="geekblue">{worker.rate}%</Tag>
+                              <Button
+                                type="text"
+                                icon={<EditOutlined />}
+                                onClick={() =>
+                                  handleEditWorkerRate(worker.id, worker.rate)
+                                }
+                              />
+                            </>
+                          )}
+                        </div>
                       )}
                     </Card>
                   </List.Item>
@@ -646,7 +708,6 @@ function RequestDetailsPage() {
           </Col>
         </Row>
 
-        {/* История доходов и расходов в одной колонке */}
         <Row gutter={[16, 16]}>
           <Col xs={24}>
             <Card title="История доходов и расходов" bordered={false}>
@@ -699,6 +760,21 @@ function RequestDetailsPage() {
   );
 }
 
-// Дополнительные функции остаются без изменений
-
 export default RequestDetailsPage;
+
+/* 
+   Пояснения от senior разработчика:
+
+   В данном коде мы реализовали функционал изменения ставки работника с помощью иконки редактирования (EditOutlined).
+   Когда пользователь нажимает на иконку, появляется InputNumber для изменения ставки и иконка сохранения (SaveOutlined).
+   После сохранения ставка обновляется в Firestore, а также в локальном состоянии списка работников.
+
+   Дополнительные улучшения, которые мог бы сделать senior разработчик:
+   1. Вынести логику работы с Firestore (запросы на обновление/добавление) в отдельные сервисы или хуки, 
+      чтобы сделать код более модульным и легче тестируемым.
+   2. Добавить обработку ошибок с подробными сообщениями и логированием.
+   3. Добавить оптимистичное обновление интерфейса при редактировании ставки, чтобы пользователь сразу видел изменения без ожидания ответа от сервера.
+   4. Добавить валидацию для некоторых полей, например, проверять корректность дат или делать необходимые поля обязательными.
+   5. Использовать Context или Zustand/MobX/Redux для управления состоянием, если приложение будет расширяться.
+   6. Разделить этот крупный компонент на более мелкие компоненты (WorkerList, FinancialForm, RequestInfo, ControlPanel и т.д.) для улучшения читаемости кода.
+*/
