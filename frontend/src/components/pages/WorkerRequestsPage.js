@@ -13,13 +13,13 @@ import {
   Row,
   Col,
   Tag,
-  Avatar
+  Avatar,
 } from 'antd';
 import {
   CarOutlined,
   CalendarOutlined,
   FileTextOutlined,
-  DollarCircleOutlined
+  DollarCircleOutlined,
 } from '@ant-design/icons';
 import moment from 'moment';
 import 'moment/locale/ru';
@@ -38,17 +38,27 @@ const WorkerRequestsPage = () => {
 
   useEffect(() => {
     const fetchRequests = async () => {
-      if (!currentUser || !currentUser.workerId) {
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+
+      // Предполагаем, что в assignedWorkers хранится uid рабочего,
+      // значит используем currentUser.uid
+      const workerIdentifier = currentUser.uid;
+      if (!workerIdentifier) {
+        console.warn('У текущего пользователя нет uid или workerId');
         setLoading(false);
         return;
       }
 
       try {
-        // Получаем все заявки, где assignedWorkers содержит currentUser.workerId
-        // Уберите фильтр по статусам, чтобы убедиться, что заявки видны
+        console.log('Current User:', currentUser);
+
+        // Запрашиваем заявки, где assignedWorkers содержит uid рабочего
         const activeQuery = query(
           collection(db, 'requests'),
-          where('assignedWorkers', 'array-contains', currentUser.workerId)
+          where('assignedWorkers', 'array-contains', workerIdentifier)
         );
         const activeSnapshot = await getDocs(activeQuery);
         const fetchedActiveRequests = activeSnapshot.docs.map((doc) => ({
@@ -56,14 +66,14 @@ const WorkerRequestsPage = () => {
           ...doc.data(),
         }));
 
+        console.log('Fetched Active Requests:', fetchedActiveRequests);
+
         setActiveRequests(fetchedActiveRequests);
 
         // Получаем финансовые данные для рабочего
-        // Если у вас есть workerId у финансов или другой ключ
-        // Предположим, что в коллекции financials есть поле workerId
         const financesQuery = query(
           collection(db, 'financials'),
-          where('workerId', '==', currentUser.workerId)
+          where('workerId', '==', workerIdentifier)
         );
         const financesSnapshot = await getDocs(financesQuery);
         const fetchedWorkerFinances = financesSnapshot.docs.map((doc) => ({
