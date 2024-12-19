@@ -37,24 +37,24 @@ function App() {
           <Content style={{ background: 'transparent', padding: 12 }}>
             <Routes>
               {/* Администраторские страницы */}
-              <Route path="/" element={<ProtectedRoute adminOnly><MainPage /></ProtectedRoute>} />
-              <Route path="/requests" element={<ProtectedRoute adminOnly><RequestsPage /></ProtectedRoute>} />
-              <Route path="/request/:id" element={<ProtectedRoute adminOnly><RequestDetailsPage /></ProtectedRoute>} />
+              <Route path="/" element={<MainPage />} />
+              <Route path="/requests" element={<RequestsPage />} />
+              <Route path="/request/:id" element={<RequestDetailsPage />} />
               <Route path="/request-form" element={<RequestForm />} />
-              <Route path="/archived-requests" element={<ProtectedRoute adminOnly><ArchivedRequestsPage /></ProtectedRoute>} />
-              <Route path="/archived-requests/:id" element={<ProtectedRoute adminOnly><ArchivedRequestDetailsPage /></ProtectedRoute>} />
-              <Route path="/confirmations" element={<ProtectedRoute adminOnly><ConfirmationRequestsPage /></ProtectedRoute>} />
-              <Route path="/calculations" element={<ProtectedRoute adminOnly><CalculationPage /></ProtectedRoute>} />
-              <Route path="/employees" element={<ProtectedRoute adminOnly><EmployeesPage /></ProtectedRoute>} />
-              <Route path="/employee/:id" element={<ProtectedRoute adminOnly><EmployeeDetailsPage /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute adminOnly><SettingsPage /></ProtectedRoute>} />
-              <Route path="/settings/employees" element={<ProtectedRoute adminOnly><EmployeeManagementPage /></ProtectedRoute>} />
-              <Route path="/request/:id/diagnostic" element={<ProtectedRoute adminOrWorker><DiagnosticCardPage /></ProtectedRoute>} />
+              <Route path="/archived-requests" element={<ArchivedRequestsPage />} />
+              <Route path="/archived-requests/:id" element={<ArchivedRequestDetailsPage />} />
+              <Route path="/confirmations" element={<ConfirmationRequestsPage />} />
+              <Route path="/calculations" element={<CalculationPage />} />
+              <Route path="/employees" element={<EmployeesPage />} />
+              <Route path="/employee/:id" element={<EmployeeDetailsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings/employees" element={<EmployeeManagementPage />} />
+              <Route path="/request/:id/diagnostic" element={<DiagnosticCardPage />} />
 
               {/* Страницы для сотрудников */}
-              <Route path="/worker-finances" element={<ProtectedRoute workerOnly><WorkerFinancesPage /></ProtectedRoute>} />
-              <Route path="/worker-requests" element={<ProtectedRoute workerOnly><WorkerRequestsPage /></ProtectedRoute>} />
-              <Route path="/report" element={<ProtectedRoute workerOnly><ReportPage /></ProtectedRoute>} />
+              <Route path="/worker-finances" element={<WorkerFinancesPage />} />
+              <Route path="/worker-requests" element={<WorkerRequestsPage />} />
+              <Route path="/report" element={<ReportPage />} />
 
               {/* Страницы логина */}
               <Route path="/admin-login" element={<AdminLoginPage />} />

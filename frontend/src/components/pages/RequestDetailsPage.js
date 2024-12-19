@@ -29,7 +29,6 @@ import {
   Spin,
   Modal,
   Tag,
-  Tooltip,
   Checkbox,
   Row,
   Col,
@@ -44,7 +43,6 @@ import {
   EditOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import LoadingSpinner from '../LoadingSpinner';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'antd/dist/reset.css'; 
@@ -74,7 +72,6 @@ function RequestDetailsPage() {
   const [workerShare, setWorkerShare] = useState([]);
   const [showCalendar, setShowCalendar] = useState(false);
 
-  // Состояние для редактирования ставки работника
   const [editingWorkerId, setEditingWorkerId] = useState(null);
   const [editingWorkerRate, setEditingWorkerRate] = useState(null);
 
@@ -100,6 +97,7 @@ function RequestDetailsPage() {
             difficulty: requestData.difficulty || 1,
             urgency: requestData.urgency || 1,
           });
+          // assignedWorkers будет массивом id работников
           setSelectedWorkers(requestData.assignedWorkers || []);
         } else {
           toast.error('Заявка не найдена.', {
@@ -121,9 +119,18 @@ function RequestDetailsPage() {
     const fetchWorkers = async () => {
       try {
         const workersCollection = await getDocs(collection(db, 'workers'));
-        setWorkers(
-          workersCollection.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-        );
+        const fetchedWorkers = workersCollection.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            // используем doc.id для уникальной идентификации
+            // uid можно использовать, если уникален, но для выбора будем использовать id
+            name: data.name || 'Неизвестно',
+            rate: typeof data.rate === 'number' ? data.rate : 0,
+          };
+        });
+        setWorkers(fetchedWorkers);
       } catch (error) {
         console.error('Ошибка загрузки работников:', error);
         toast.error('Произошла ошибка при загрузке работников.', {
@@ -140,15 +147,18 @@ function RequestDetailsPage() {
           where('requestId', '==', id)
         );
         const financialsSnapshot = await getDocs(financialsQuery);
-        const fetchedFinancials = financialsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-          date: doc.data().date ? doc.data().date.toDate() : null,
-        }));
+        const fetchedFinancials = financialsSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            date: data.date ? data.date.toDate() : null,
+          };
+        });
         setFinancials(fetchedFinancials);
 
         if (fetchedFinancials.length > 0 && selectedWorkers.length > 0) {
-          calculateShares(fetchedFinancials);
+          await calculateShares(fetchedFinancials, selectedWorkers);
         }
       } catch (error) {
         console.error('Ошибка загрузки финансовых записей:', error);
@@ -161,17 +171,15 @@ function RequestDetailsPage() {
     };
 
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, navigate]);
 
   useEffect(() => {
     if (financials.length > 0 && selectedWorkers.length > 0) {
-      calculateShares(financials);
+      calculateShares(financials, selectedWorkers);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [financials, selectedWorkers]);
 
-  const calculateShares = (financials) => {
+  const calculateShares = async (financials, assignedWorkers) => {
     const totalIncome = financials
       .filter((record) => record.type === 'income')
       .reduce((sum, record) => sum + parseFloat(record.amount), 0);
@@ -182,31 +190,60 @@ function RequestDetailsPage() {
 
     const netIncome = totalIncome - totalExpense;
 
-    if (netIncome <= 0 || selectedWorkers.length === 0) {
+    if (netIncome <= 0 || assignedWorkers.length === 0) {
       setCompanyShare(0);
       setWorkerShare([]);
+      await saveSharesToDB(0, []);
       return;
     }
 
-    const totalWorkerRate = selectedWorkers.reduce((sum, workerId) => {
-      const worker = workers.find((w) => w.id === workerId);
-      return sum + (worker?.rate || 0);
-    }, 0);
+    // assignedWorkers - массив id работников
+    const assignedWorkersData = assignedWorkers
+      .map((workerId) => workers.find((w) => w.id === workerId))
+      .filter(Boolean);
 
-    const companyShare = Math.floor((netIncome * (100 - totalWorkerRate)) / 100);
+    const totalWorkerRate = assignedWorkersData.reduce((sum, w) => sum + (w.rate || 0), 0);
 
-    const workerShares = selectedWorkers.map((workerId) => {
-      const worker = workers.find((w) => w.id === workerId);
-      const rate = worker?.rate || 0;
+    const compShare = Math.floor((netIncome * (100 - totalWorkerRate)) / 100);
+
+    const ws = assignedWorkersData.map((worker) => {
+      const rate = worker.rate || 0;
       return {
-        id: workerId,
-        name: worker?.name || 'Неизвестно',
+        uid: worker.id, // Используем id работника как уникальный идентификатор
+        name: worker.name || 'Неизвестно',
         share: Math.floor((netIncome * rate) / 100),
       };
     });
 
-    setCompanyShare(companyShare);
-    setWorkerShare(workerShares);
+    setCompanyShare(compShare);
+    setWorkerShare(ws);
+
+    await saveSharesToDB(compShare, ws);
+  };
+
+  const saveSharesToDB = async (companyShareVal, workerSharesArr) => {
+    if (typeof companyShareVal !== 'number') {
+      companyShareVal = 0;
+    }
+    if (!Array.isArray(workerSharesArr)) {
+      workerSharesArr = [];
+    }
+
+    const sanitizedWorkerShares = workerSharesArr.map((w) => ({
+      uid: w.uid || 'no-id',
+      name: w.name || 'Неизвестно',
+      share: typeof w.share === 'number' ? w.share : 0,
+    }));
+
+    const requestDocRef = doc(db, 'requests', id);
+    try {
+      await updateDoc(requestDocRef, {
+        companyShare: companyShareVal,
+        workerShares: sanitizedWorkerShares,
+      });
+    } catch (err) {
+      console.error('Ошибка сохранения долей в DB:', err);
+    }
   };
 
   const handleFinancialChange = (e) => {
@@ -236,11 +273,11 @@ function RequestDetailsPage() {
       const financialsCollectionRef = collection(db, 'financials');
       await addDoc(financialsCollectionRef, financialRecord);
 
-      setFinancials((prevFinancials) => {
-        const updatedFinancials = [...prevFinancials, financialRecord];
-        calculateShares(updatedFinancials);
-        return updatedFinancials;
-      });
+      const updatedFinancials = [...financials, financialRecord];
+      setFinancials(updatedFinancials);
+      if (selectedWorkers.length > 0) {
+        await calculateShares(updatedFinancials, selectedWorkers);
+      }
 
       setNewFinancial({
         type: 'income',
@@ -262,9 +299,10 @@ function RequestDetailsPage() {
   };
 
   const handleWorkerClick = async (workerId) => {
+    // Логика множественного выбора
+    // Если уже выбран - убираем, если нет - добавляем.
     let updatedWorkers = [...selectedWorkers];
-
-    if (selectedWorkers.includes(workerId)) {
+    if (updatedWorkers.includes(workerId)) {
       updatedWorkers = updatedWorkers.filter((id) => id !== workerId);
     } else {
       updatedWorkers.push(workerId);
@@ -277,7 +315,12 @@ function RequestDetailsPage() {
       await updateDoc(requestDocRef, {
         assignedWorkers: updatedWorkers,
       });
-      toast.success('Работники успешно обновлены.', {
+
+      if (financials.length > 0) {
+        await calculateShares(financials, updatedWorkers);
+      }
+
+      toast.success('Список работников успешно обновлен.', {
         position: 'top-center',
         autoClose: 3000,
       });
@@ -382,7 +425,9 @@ function RequestDetailsPage() {
         autoClose: 3000,
       });
 
-      calculateShares(financials);
+      if (financials.length > 0 && selectedWorkers.length > 0) {
+        await calculateShares(financials, selectedWorkers);
+      }
     } catch (error) {
       console.error('Ошибка обновления ставки работника:', error);
       toast.error('Произошла ошибка при обновлении ставки.', {
@@ -611,7 +656,9 @@ function RequestDetailsPage() {
                           ? '#e6f7ff'
                           : '#fff',
                         border:
-                          selectedWorkers.includes(worker.id) && '2px solid #1890ff',
+                          selectedWorkers.includes(worker.id) &&
+                          '2px solid #1890ff',
+                        textAlign: 'center'
                       }}
                     >
                       <Checkbox
@@ -621,36 +668,34 @@ function RequestDetailsPage() {
                       >
                         {worker.name}
                       </Checkbox>
-                      {worker.rate !== undefined && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          {editingWorkerId === worker.id ? (
-                            <>
-                              <InputNumber
-                                min={0}
-                                max={100}
-                                value={editingWorkerRate}
-                                onChange={(value) => setEditingWorkerRate(value)}
-                                style={{ width: '60px' }}
-                              />
-                              <Button
-                                type="text"
-                                icon={<SaveOutlined style={{ color: 'green' }} />}
-                                onClick={() => handleSaveWorkerRate(worker.id)}
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <Tag color="geekblue">{worker.rate}%</Tag>
-                              <Button
-                                type="text"
-                                icon={<EditOutlined />}
-                                onClick={() =>
-                                  handleEditWorkerRate(worker.id, worker.rate)
-                                }
-                              />
-                            </>
+                      {editingWorkerId === worker.id ? (
+                        <>
+                          <InputNumber
+                            min={0}
+                            max={100}
+                            value={editingWorkerRate}
+                            onChange={(value) => setEditingWorkerRate(value)}
+                            style={{ width: '60px' }}
+                          />
+                          <Button
+                            type="text"
+                            icon={<SaveOutlined style={{ color: 'green' }} />}
+                            onClick={() => handleSaveWorkerRate(worker.id)}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          {typeof worker.rate === 'number' && (
+                            <Tag color="geekblue">{worker.rate}%</Tag>
                           )}
-                        </div>
+                          <Button
+                            type="text"
+                            icon={<EditOutlined />}
+                            onClick={() =>
+                              handleEditWorkerRate(worker.id, worker.rate)
+                            }
+                          />
+                        </>
                       )}
                     </Card>
                   </List.Item>
@@ -718,7 +763,7 @@ function RequestDetailsPage() {
                 <Space>
                   <Text strong>Доли рабочих:</Text>
                   {workerShare.map((worker) => (
-                    <Tag color="green" key={worker.id}>
+                    <Tag color="green" key={worker.uid}>
                       {worker.name}: {worker.share} руб.
                     </Tag>
                   ))}
@@ -752,15 +797,6 @@ function RequestDetailsPage() {
                 />
               </Space>
             </Card>
-          </Col>
-        </Row>
-
-        {/* Кнопка перехода на страницу диагностики */}
-        <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
-          <Col xs={24}>
-            <Button type="primary" block onClick={() => navigate(`/request/${id}/diagnostic`)}>
-              Перейти к диагностической карте
-            </Button>
           </Col>
         </Row>
       </Space>
