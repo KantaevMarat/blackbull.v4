@@ -24,12 +24,15 @@ import WorkerFinancesPage from './components/pages/WorkerFinancesPage';
 import WorkerRequestsPage from './components/pages/WorkerRequestsPage';
 import ReportPage from './components/pages/ReportPage';
 import DiagnosticCardPage from './components/pages/DiagnosticCardPage';
+import { Layout} from 'antd';
+const { Content } = Layout;
 function App() {
   return (
     <AuthProvider>
-      <div className="App">
+      <Layout style={{ minHeight: '100vh' }}>
       <Sidebar/>
-        <div className="content">
+      <Layout style={{ padding: '24px' }}>
+        <Content style={{ background: '#fff', padding: 24 }}>
           <Routes>
             {/* Администраторские страницы */}
             <Route path="/" element={<ProtectedRoute adminOnly><MainPage /></ProtectedRoute>} />
@@ -53,10 +56,11 @@ function App() {
             {/* Страницы логина */}
             <Route path="/admin-login" element={<AdminLoginPage />} />
             <Route path="/worker-login" element={<WorkerLoginPage />} />
-          </Routes>
-        </div>
-      </div>
-    </AuthProvider>
+           </Routes>
+        </Content>
+      </Layout>
+    </Layout>
+  </AuthProvider>
   );
 }
 

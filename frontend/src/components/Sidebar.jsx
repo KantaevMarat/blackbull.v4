@@ -43,94 +43,33 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      // Можно добавить navigate('/worker-login') или другое действие при необходимости
     } catch (error) {
       console.error("Ошибка выхода:", error);
     }
   };
 
   const adminMenuItems = [
-    {
-      key: 'home',
-      icon: <HomeOutlined />,
-      label: <Link to="/">Главная</Link>,
-    },
-    {
-      key: 'new-request',
-      icon: <PlusCircleOutlined />,
-      label: <Link to="/request-form">Новая заявка</Link>,
-    },
-    {
-      key: 'requests',
-      icon: <UnorderedListOutlined />,
-      label: <Link to="/requests">Список заявок</Link>,
-    },
-    {
-      key: 'archived-requests',
-      icon: <InboxOutlined />,
-      label: <Link to="/archived-requests">Архив заявок</Link>,
-    },
-    {
-      key: 'confirmations',
-      icon: <CheckCircleOutlined />,
-      label: <Link to="/confirmations">Подтверждения</Link>,
-    },
-    {
-      key: 'calculations',
-      icon: <CalculatorOutlined />,
-      label: <Link to="/calculations">Расчётная система</Link>,
-    },
-    {
-      key: 'employees',
-      icon: <UsergroupAddOutlined />,
-      label: <Link to="/employees">Сотрудники</Link>,
-    },
-    {
-      key: 'settings',
-      icon: <SettingOutlined />,
-      label: <Link to="/settings">Настройки</Link>,
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: <span onClick={handleLogout}>Выйти</span>,
-    },
+    { key: 'home', icon: <HomeOutlined />, label: <Link to="/">Главная</Link> },
+    { key: 'new-request', icon: <PlusCircleOutlined />, label: <Link to="/request-form">Новая заявка</Link> },
+    { key: 'requests', icon: <UnorderedListOutlined />, label: <Link to="/requests">Список заявок</Link> },
+    { key: 'archived-requests', icon: <InboxOutlined/>, label: <Link to="/archived-requests">Архив заявок</Link> },
+    { key: 'confirmations', icon: <CheckCircleOutlined />, label: <Link to="/confirmations">Подтверждения</Link> },
+    { key: 'calculations', icon: <CalculatorOutlined />, label: <Link to="/calculations">Расчётная система</Link> },
+    { key: 'employees', icon: <UsergroupAddOutlined />, label: <Link to="/employees">Сотрудники</Link> },
+    { key: 'settings', icon: <SettingOutlined />, label: <Link to="/settings">Настройки</Link> },
+    { key: 'logout', icon: <LogoutOutlined />, label: <span onClick={handleLogout}>Выйти</span> },
   ];
 
   const workerMenuItems = [
-    {
-      key: 'worker-finances',
-      icon: <CalculatorOutlined />,
-      label: <Link to="/worker-finances">Система расчетов</Link>,
-    },
-    {
-      key: 'worker-requests',
-      icon: <UnorderedListOutlined />,
-      label: <Link to="/worker-requests">Мои заявки</Link>,
-    },
-    {
-      key: 'report',
-      icon: <FileTextOutlined />,
-      label: <Link to="/report">Отчёты</Link>,
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: <span onClick={handleLogout}>Выйти</span>,
-    },
+    { key: 'worker-finances', icon: <CalculatorOutlined />, label: <Link to="/worker-finances">Система расчетов</Link> },
+    { key: 'worker-requests', icon: <UnorderedListOutlined />, label: <Link to="/worker-requests">Мои заявки</Link> },
+    { key: 'report', icon: <FileTextOutlined />, label: <Link to="/report">Отчёты</Link> },
+    { key: 'logout', icon: <LogoutOutlined />, label: <span onClick={handleLogout}>Выйти</span> },
   ];
 
   const guestMenuItems = [
-    {
-      key: 'login',
-      icon: <LoginOutlined />,
-      label: <Link to="/worker-login">Войти</Link>,
-    },
-    {
-      key: 'new-request',
-      icon: <PlusCircleOutlined />,
-      label: <Link to="/request-form">Новая заявка</Link>,
-    },
+    { key: 'login', icon: <LoginOutlined />, label: <Link to="/worker-login">Войти</Link> },
+    { key: 'new-request', icon: <PlusCircleOutlined />, label: <Link to="/request-form">Новая заявка</Link> },
   ];
 
   let menuItems = [];
@@ -148,7 +87,6 @@ const Sidebar = () => {
     <>
       {isMobile ? (
         <>
-          {/* Кнопка белого цвета поверх контента */}
           <div 
             style={{ 
               position: 'fixed', 
@@ -175,7 +113,7 @@ const Sidebar = () => {
             styles={{ body: { padding: 0 } }}
           >
             <div style={{ height: '64px', margin: '16px', color: '#000', textAlign: 'center', fontSize: '1.2em' }}>
-              BlackBull
+              BBull
             </div>
             <Menu
               mode="inline"
@@ -187,22 +125,16 @@ const Sidebar = () => {
           </Drawer>
         </>
       ) : (
+        // На больших экранах используем обычный Sider AntD без position fixed
         <Sider
           collapsible
           collapsed={collapsed}
           onCollapse={toggleCollapsed}
           breakpoint="lg"
           collapsedWidth="80"
-          style={{
-            height: '100vh',
-            position: 'fixed',
-            left: 0,
-            top: 0,
-            bottom: 0,
-          }}
         >
           <div style={{ height: '64px', margin: '16px', color: '#fff', textAlign: 'center', fontSize: '1.2em' }}>
-            LOGO
+            BBull
           </div>
           <Menu
             theme="dark"
