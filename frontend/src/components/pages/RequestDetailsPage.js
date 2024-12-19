@@ -758,7 +758,7 @@ function RequestDetailsPage() {
         {/* Кнопка перехода на страницу диагностики */}
         <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
           <Col xs={24}>
-            <Button type="primary" block onClick={() => navigate(`/requests/${id}/diagnostic`)}>
+            <Button type="primary" block onClick={() => navigate(`/request/${id}/diagnostic`)}>
               Перейти к диагностической карте
             </Button>
           </Col>

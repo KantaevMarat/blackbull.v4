@@ -36,6 +36,7 @@ const WorkerRequestsPage = () => {
   const { currentUser } = useAuth();
   const [activeRequests, setActiveRequests] = useState([]);
   const [workerFinances, setWorkerFinances] = useState({});
+  const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const WorkerRequestsPage = () => {
   moment.locale('ru');
 
   useEffect(() => {
-    const fetchRequests = async () => {
+    const fetchData = async () => {
       if (!currentUser) {
         setLoading(false);
         return;
@@ -57,9 +58,18 @@ const WorkerRequestsPage = () => {
       }
 
       try {
+        // Загружаем рабочих
+        const workersSnapshot = await getDocs(collection(db, 'workers'));
+        const fetchedWorkers = workersSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setWorkers(fetchedWorkers);
+
+        // Загружаем заявки, к которым назначен текущий рабочий
         const activeQuery = query(
           collection(db, 'requests'),
-          where('assignedWorkers', 'array-contains', workerIdentifier)
+          where('assignedWorkers', 'array-contains', currentUser.workerId) // используем currentUser.workerId, предположим он есть
         );
         const activeSnapshot = await getDocs(activeQuery);
         const fetchedActiveRequests = activeSnapshot.docs.map((doc) => ({
@@ -69,9 +79,10 @@ const WorkerRequestsPage = () => {
 
         setActiveRequests(fetchedActiveRequests);
 
+        // Загружаем финансовые записи для текущего рабочего
         const financesQuery = query(
           collection(db, 'financials'),
-          where('workerId', '==', workerIdentifier)
+          where('workerId', '==', currentUser.workerId) // используем workerId, по аналогии с кодом
         );
         const financesSnapshot = await getDocs(financesQuery);
         const fetchedWorkerFinances = financesSnapshot.docs.map((doc) => ({
@@ -91,6 +102,7 @@ const WorkerRequestsPage = () => {
         });
 
         setWorkerFinances(paymentsByRequestId);
+
       } catch (error) {
         console.error('Ошибка загрузки заявок или финансов:', error);
       } finally {
@@ -98,13 +110,13 @@ const WorkerRequestsPage = () => {
       }
     };
 
-    fetchRequests();
+    fetchData();
   }, [currentUser]);
 
-  const calculateShares = (financials = [], assignedWorkers) => {
+  const calculateWorkerShare = (financials = [], assignedWorkers, currentWorkerId) => {
     if (!Array.isArray(financials)) {
       console.error('Ожидается массив financials, но получено: ', financials);
-      return { companyShare: 0, perWorkerShare: 0 };
+      return 0;
     }
 
     const totalIncome = financials
@@ -116,15 +128,32 @@ const WorkerRequestsPage = () => {
       .reduce((sum, record) => sum + parseFloat(record.amount), 0);
 
     const netIncome = totalIncome - totalExpense;
-    const companyShare = Math.floor(netIncome * 0.5);
-    const workerTotal = Math.floor(netIncome * 0.5);
 
-    const perWorkerShare =
-      assignedWorkers && assignedWorkers.length > 0
-        ? Math.floor(workerTotal / assignedWorkers.length)
-        : 0;
+    if (netIncome <= 0 || !assignedWorkers || assignedWorkers.length === 0) {
+      return 0;
+    }
 
-    return { companyShare, perWorkerShare };
+    // Находим всех назначенных работников
+    const assignedWorkersData = assignedWorkers.map((workerId) =>
+      workers.find((w) => w.id === workerId)
+    ).filter(Boolean); // отфильтровываем тех, кого не нашли
+
+    // Считаем суммарную ставку всех назначенных работников
+    const totalWorkerRate = assignedWorkersData.reduce((sum, w) => sum + (w.rate || 0), 0);
+
+    if (totalWorkerRate === 0) {
+      return 0;
+    }
+
+    // Доля текущего рабочего
+    const currentWorker = workers.find((w) => w.id === currentWorkerId);
+    if (!currentWorker || currentWorker.rate === undefined) {
+      return 0;
+    }
+
+    // Рассчитываем долю по ставке
+    const workerShare = Math.floor((netIncome * currentWorker.rate) / 100);
+    return workerShare;
   };
 
   if (loading) {
@@ -152,9 +181,11 @@ const WorkerRequestsPage = () => {
               dataSource={activeRequests}
               renderItem={(request) => {
                 const financials = workerFinances[request.id] || [];
-                const { perWorkerShare } = calculateShares(
+                // Вместо perWorkerShare считаем индивидуальную долю данного рабочего
+                const workerIndividualShare = calculateWorkerShare(
                   financials,
-                  request.assignedWorkers
+                  request.assignedWorkers,
+                  currentUser.workerId // предполагаем что у currentUser есть workerId
                 );
 
                 return (
@@ -191,7 +222,7 @@ const WorkerRequestsPage = () => {
                                 ? 'Новая'
                                 : request.status}
                             </Tag>
-                            {perWorkerShare > 0 ? (
+                            {workerIndividualShare > 0 ? (
                               <div className="amount-badge">
                                 <DollarCircleOutlined
                                   style={{
@@ -200,7 +231,7 @@ const WorkerRequestsPage = () => {
                                   }}
                                 />
                                 <Text strong className="amount-text">
-                                  {perWorkerShare} ₽
+                                  {workerIndividualShare} ₽
                                 </Text>
                               </div>
                             ) : (
