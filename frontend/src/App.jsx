@@ -24,43 +24,46 @@ import WorkerFinancesPage from './components/pages/WorkerFinancesPage';
 import WorkerRequestsPage from './components/pages/WorkerRequestsPage';
 import ReportPage from './components/pages/ReportPage';
 import DiagnosticCardPage from './components/pages/DiagnosticCardPage';
-import { Layout} from 'antd';
+import { Layout } from 'antd';
+
 const { Content } = Layout;
+
 function App() {
   return (
     <AuthProvider>
       <Layout style={{ minHeight: '100vh' }}>
-      <Sidebar/>
-      <Layout style={{ padding: '24px' }}>
-        <Content style={{ background: '#fff', padding: 24 }}>
-          <Routes>
-            {/* Администраторские страницы */}
-            <Route path="/" element={<ProtectedRoute adminOnly><MainPage /></ProtectedRoute>} />
-            <Route path="/requests" element={<ProtectedRoute adminOnly><RequestsPage /></ProtectedRoute>} />
-            <Route path="/request/:id" element={<ProtectedRoute adminOnly><RequestDetailsPage /></ProtectedRoute>} />
-            <Route path="/request-form" element={<RequestForm />} />
-            <Route path="/archived-requests" element={<ProtectedRoute adminOnly><ArchivedRequestsPage /></ProtectedRoute>} />
-            <Route path="/archived-requests/:id" element={<ProtectedRoute adminOnly><ArchivedRequestDetailsPage /></ProtectedRoute>} />
-            <Route path="/confirmations" element={<ProtectedRoute adminOnly><ConfirmationRequestsPage /></ProtectedRoute>} />
-            <Route path="/calculations" element={<ProtectedRoute adminOnly><CalculationPage /></ProtectedRoute>} />
-            <Route path="/employees" element={<ProtectedRoute adminOnly><EmployeesPage /></ProtectedRoute>} />
-            <Route path="/employee/:id" element={<ProtectedRoute adminOnly><EmployeeDetailsPage /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute adminOnly><SettingsPage /></ProtectedRoute>} />
-            <Route path="/settings/employees" element={<ProtectedRoute adminOnly><EmployeeManagementPage /></ProtectedRoute>} />
-            <Route path="/requests/:id/diagnostic" element={<ProtectedRoute adminOrWorker><DiagnosticCardPage /></ProtectedRoute>} />
-            {/* Страницы для сотрудников */}
-            <Route path="/worker-finances" element={<ProtectedRoute workerOnly><WorkerFinancesPage /></ProtectedRoute>} />
-            <Route path="/worker-requests" element={<ProtectedRoute workerOnly><WorkerRequestsPage /></ProtectedRoute>} />
-            <Route path="/report" element={<ProtectedRoute workerOnly><ReportPage /></ProtectedRoute>} />
+        <Sidebar />
+        <Layout style={{ padding: '24px' }}>
+          <Content style={{ background: '#fff', padding: 24 }}>
+            <Routes>
+              {/* Администраторские страницы */}
+              <Route path="/" element={<ProtectedRoute adminOnly><MainPage /></ProtectedRoute>} />
+              <Route path="/requests" element={<ProtectedRoute adminOnly><RequestsPage /></ProtectedRoute>} />
+              <Route path="/request/:id" element={<ProtectedRoute adminOnly><RequestDetailsPage /></ProtectedRoute>} />
+              <Route path="/request-form" element={<RequestForm />} />
+              <Route path="/archived-requests" element={<ProtectedRoute adminOnly><ArchivedRequestsPage /></ProtectedRoute>} />
+              <Route path="/archived-requests/:id" element={<ProtectedRoute adminOnly><ArchivedRequestDetailsPage /></ProtectedRoute>} />
+              <Route path="/confirmations" element={<ProtectedRoute adminOnly><ConfirmationRequestsPage /></ProtectedRoute>} />
+              <Route path="/calculations" element={<ProtectedRoute adminOnly><CalculationPage /></ProtectedRoute>} />
+              <Route path="/employees" element={<ProtectedRoute adminOnly><EmployeesPage /></ProtectedRoute>} />
+              <Route path="/employee/:id" element={<ProtectedRoute adminOnly><EmployeeDetailsPage /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute adminOnly><SettingsPage /></ProtectedRoute>} />
+              <Route path="/settings/employees" element={<ProtectedRoute adminOnly><EmployeeManagementPage /></ProtectedRoute>} />
+              <Route path="/requests/:id/diagnostic" element={<ProtectedRoute adminOrWorker><DiagnosticCardPage /></ProtectedRoute>} />
 
-            {/* Страницы логина */}
-            <Route path="/admin-login" element={<AdminLoginPage />} />
-            <Route path="/worker-login" element={<WorkerLoginPage />} />
-           </Routes>
-        </Content>
+              {/* Страницы для сотрудников */}
+              <Route path="/worker-finances" element={<ProtectedRoute workerOnly><WorkerFinancesPage /></ProtectedRoute>} />
+              <Route path="/worker-requests" element={<ProtectedRoute workerOnly><WorkerRequestsPage /></ProtectedRoute>} />
+              <Route path="/report" element={<ProtectedRoute workerOnly><ReportPage /></ProtectedRoute>} />
+
+              {/* Страницы логина */}
+              <Route path="/admin-login" element={<AdminLoginPage />} />
+              <Route path="/worker-login" element={<WorkerLoginPage />} />
+            </Routes>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
-  </AuthProvider>
+    </AuthProvider>
   );
 }
 
