@@ -106,7 +106,7 @@ const AdminLoginPage = () => {
               type="tel"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="+7(999)99-99"
+              placeholder="+7(999)999-99-99"
             />
           </Form.Item>
           <Button type="primary" htmlType="submit" className="login-button" block>

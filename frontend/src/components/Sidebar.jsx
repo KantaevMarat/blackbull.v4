@@ -1,168 +1,217 @@
-// src/components/Sidebar.js
+// src/components/Sidebar.jsx
 
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './css/Sidebar.css';
-import { FaBars, FaHome, FaList, FaArchive, FaCheckCircle, FaUserFriends, FaSignInAlt, FaSignOutAlt, FaCog, FaPlusCircle } from 'react-icons/fa';
-import { AiFillCalculator, AiOutlineFileText } from 'react-icons/ai';
+import React, { useState } from 'react';
+import { Layout, Menu, Drawer, Button, Grid } from 'antd';
+import {
+  MenuOutlined,
+  HomeOutlined,
+  PlusCircleOutlined,
+  UnorderedListOutlined,
+  InboxOutlined,
+  CheckCircleOutlined,
+  UsergroupAddOutlined,
+  SettingOutlined,
+  CalculatorOutlined,
+  FileTextOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../components/auth/AuthContext';
 
+const { Sider } = Layout;
+const { useBreakpoint } = Grid;
+
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);  // Состояние для открытия и закрытия сайдбара
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);  // Определение мобильного устройства
-  const { currentUser, userRole, logout } = useAuth();  // Получение данных пользователя и его роли
-  const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const { currentUser, userRole, logout } = useAuth();
+  const screens = useBreakpoint();
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);  // Переключение состояния сайдбара
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
   };
 
-  const handleResize = () => {
-    setIsMobile(window.innerWidth <= 768);  // Проверка размера окна для мобильного устройства
+  const showDrawer = () => {
+    setDrawerVisible(true);
   };
 
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);  // Добавление обработчика изменения размера
-
-    return () => {
-      window.removeEventListener('resize', handleResize);  // Удаление обработчика при размонтировании
-    };
-  }, []);
-
-  useEffect(() => {
-    const appElement = document.querySelector('.App');
-    if (isOpen) {
-      appElement.classList.add('sidebar-open');
-    } else {
-      appElement.classList.remove('sidebar-open');
-    }
-  }, [isOpen]);
+  const closeDrawer = () => {
+    setDrawerVisible(false);
+  };
 
   const handleLogout = async () => {
     try {
       await logout();
-      navigate('/worker-login');  // Перенаправление на страницу входа для сотрудников после выхода
+      // navigate('/worker-login') или другое действие при необходимости
     } catch (error) {
-      console.error("Ошибка выхода из системы:", error);
+      console.error("Ошибка выхода:", error);
     }
   };
 
+  const adminMenuItems = [
+    {
+      key: 'home',
+      icon: <HomeOutlined />,
+      label: <Link to="/">Главная</Link>,
+    },
+    {
+      key: 'new-request',
+      icon: <PlusCircleOutlined />,
+      label: <Link to="/request-form">Новая заявка</Link>,
+    },
+    {
+      key: 'requests',
+      icon: <UnorderedListOutlined />,
+      label: <Link to="/requests">Список заявок</Link>,
+    },
+    {
+      key: 'archived-requests',
+      icon: <InboxOutlined/>,
+      label: <Link to="/archived-requests">Архив заявок</Link>,
+    },
+    {
+      key: 'confirmations',
+      icon: <CheckCircleOutlined />,
+      label: <Link to="/confirmations">Подтверждения</Link>,
+    },
+    {
+      key: 'calculations',
+      icon: <CalculatorOutlined />,
+      label: <Link to="/calculations">Расчётная система</Link>,
+    },
+    {
+      key: 'employees',
+      icon: <UsergroupAddOutlined />,
+      label: <Link to="/employees">Сотрудники</Link>,
+    },
+    {
+      key: 'settings',
+      icon: <SettingOutlined />,
+      label: <Link to="/settings">Настройки</Link>,
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: <span onClick={handleLogout}>Выйти</span>,
+    },
+  ];
+
+  const workerMenuItems = [
+    {
+      key: 'worker-finances',
+      icon: <CalculatorOutlined />,
+      label: <Link to="/worker-finances">Система расчетов</Link>,
+    },
+    {
+      key: 'worker-requests',
+      icon: <UnorderedListOutlined />,
+      label: <Link to="/worker-requests">Мои заявки</Link>,
+    },
+    {
+      key: 'report',
+      icon: <FileTextOutlined />,
+      label: <Link to="/report">Отчёты</Link>,
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: <span onClick={handleLogout}>Выйти</span>,
+    },
+  ];
+
+  const guestMenuItems = [
+    {
+      key: 'login',
+      icon: <LoginOutlined />,
+      label: <Link to="/worker-login">Войти</Link>,
+    },
+    {
+      key: 'new-request',
+      icon: <PlusCircleOutlined />,
+      label: <Link to="/request-form">Новая заявка</Link>,
+    },
+  ];
+
+  let menuItems = [];
+  if (!currentUser) {
+    menuItems = guestMenuItems;
+  } else if (userRole === 'admin') {
+    menuItems = adminMenuItems;
+  } else if (userRole === 'worker') {
+    menuItems = workerMenuItems;
+  }
+
+  const isMobile = !screens.lg;
+
   return (
     <>
-      <div className="top-bar">
-        <div
-          className={`menu-icon ${isOpen && isMobile ? 'open' : ''} ${isMobile ? 'mobile' : 'desktop'}`}
-          onClick={toggleSidebar}  // Переключение сайдбара при клике
+      {isMobile ? (
+        <>
+          {/* Кнопка белого цвета поверх контента */}
+          <div 
+            style={{ 
+              position: 'fixed', 
+              top: 10, 
+              left: 10, 
+              zIndex: 999 
+            }}
+          >
+            <Button 
+              type="text"
+              icon={<MenuOutlined style={{ color: '#000' }} />} 
+              onClick={showDrawer}
+              style={{ 
+                backgroundColor: '#fff', 
+                borderColor: '#fff' 
+              }}
+            />
+          </div>
+          <Drawer
+            placement="left"
+            closable={true}
+            onClose={closeDrawer}
+            open={drawerVisible}
+            styles={{ body: { padding: 0 } }} // Используем styles вместо bodyStyle
+          >
+            <div style={{ height: '64px', margin: '16px', color: '#000', textAlign: 'center', fontSize: '1.2em' }}>
+              LOGO
+            </div>
+            <Menu
+              mode="inline"
+              defaultSelectedKeys={['home']}
+              items={menuItems}
+              style={{ height: '100%', borderRight: 0 }}
+              onClick={() => closeDrawer()}
+            />
+          </Drawer>
+        </>
+      ) : (
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={toggleCollapsed}
+          breakpoint="lg"
+          collapsedWidth="80"
+          style={{
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            bottom: 0,
+          }}
         >
-          <FaBars />
-        </div>
-      </div>
-      <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <ul className="menu-items">
-          {currentUser && (
-            <>
-              {userRole === 'admin' && (
-                <>
-                  <li className="menu-item home">
-                    <Link to="/" onClick={() => setIsOpen(false)}>
-                      <FaHome className="icon" />
-                      <span className="link-text">Главная</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/request-form" onClick={() => setIsOpen(false)}>
-                      <FaPlusCircle className="icon" />
-                      <span className="link-text">Новая заявка</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/requests" onClick={() => setIsOpen(false)}>
-                      <FaList className="icon" />
-                      <span className="link-text">Список заявок</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/archived-requests" onClick={() => setIsOpen(false)}>
-                      <FaArchive className="icon" />
-                      <span className="link-text">Архив заявок</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/confirmations" onClick={() => setIsOpen(false)}>
-                      <FaCheckCircle className="icon" />
-                      <span className="link-text">Подтверждения</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/calculations" onClick={() => setIsOpen(false)}>
-                      <AiFillCalculator className="icon large-icon" />
-                      <span className="link-text">Расчётная система</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/employees" onClick={() => setIsOpen(false)}>
-                      <FaUserFriends className="icon" />
-                      <span className="link-text">Сотрудники</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/settings" onClick={() => setIsOpen(false)}>
-                      <FaCog className="icon" />
-                      <span className="link-text">Настройки</span>
-                    </Link>
-                  </li>
-                </>
-              )}
-
-              {userRole === 'worker' && (
-                <>
-                  <li>
-                    <Link to="/worker-finances" onClick={() => setIsOpen(false)}>
-                      <AiFillCalculator className="icon" />
-                      <span className="link-text">Система расчетов</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/worker-requests" onClick={() => setIsOpen(false)}>
-                      <FaList className="icon" />
-                      <span className="link-text">Мои заявки</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/report" onClick={() => setIsOpen(false)}>
-                      <AiOutlineFileText className="icon" />
-                      <span className="link-text">Отчеты</span>
-                    </Link>
-                  </li>
-                </>
-              )}
-              <li className="menu-item logout">
-                <Link to="#" onClick={handleLogout}>
-                  <FaSignOutAlt className="icon" />
-                  <span className="link-text">Выйти</span>
-                </Link>
-              </li>
-            </>
-          )}
-
-          {!currentUser && (
-            <>
-              <li className="menu-item login">
-                <Link to="/worker-login" onClick={() => setIsOpen(false)}>
-                  <FaSignInAlt className="icon" />
-                  <span className="link-text">Войти</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/request-form" onClick={() => setIsOpen(false)}>
-                  <FaPlusCircle className="icon" />
-                  <span className="link-text">Новая заявка</span>
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
+          <div style={{ height: '64px', margin: '16px', color: '#fff', textAlign: 'center', fontSize: '1.2em' }}>
+            LOGO
+          </div>
+          <Menu
+            theme="dark"
+            defaultSelectedKeys={['home']}
+            mode="inline"
+            items={menuItems}
+          />
+        </Sider>
+      )}
     </>
   );
 };

@@ -28,7 +28,7 @@ function App() {
   return (
     <AuthProvider>
       <div className="App">
-        <Sidebar />
+      <Sidebar/>
         <div className="content">
           <Routes>
             {/* Администраторские страницы */}
