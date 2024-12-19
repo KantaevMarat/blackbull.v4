@@ -43,7 +43,7 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      // navigate('/worker-login') или другое действие при необходимости
+      // Можно добавить navigate('/worker-login') или другое действие при необходимости
     } catch (error) {
       console.error("Ошибка выхода:", error);
     }
@@ -67,7 +67,7 @@ const Sidebar = () => {
     },
     {
       key: 'archived-requests',
-      icon: <InboxOutlined/>,
+      icon: <InboxOutlined />,
       label: <Link to="/archived-requests">Архив заявок</Link>,
     },
     {
@@ -172,10 +172,10 @@ const Sidebar = () => {
             closable={true}
             onClose={closeDrawer}
             open={drawerVisible}
-            styles={{ body: { padding: 0 } }} // Используем styles вместо bodyStyle
+            styles={{ body: { padding: 0 } }}
           >
             <div style={{ height: '64px', margin: '16px', color: '#000', textAlign: 'center', fontSize: '1.2em' }}>
-              LOGO
+              BlackBull
             </div>
             <Menu
               mode="inline"
