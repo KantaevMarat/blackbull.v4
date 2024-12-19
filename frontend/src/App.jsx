@@ -34,7 +34,7 @@ function App() {
       <Layout style={{ minHeight: '100vh' }}>
         <Sidebar />
         <Layout style={{ padding: '24px' }}>
-          <Content style={{ background: '#fff', padding: 24 }}>
+          <Content style={{ background: 'transparent', padding: 24 }}>
             <Routes>
               {/* Администраторские страницы */}
               <Route path="/" element={<ProtectedRoute adminOnly><MainPage /></ProtectedRoute>} />

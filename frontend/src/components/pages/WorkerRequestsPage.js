@@ -1,4 +1,4 @@
-// src/components/WorkerRequestsPage.jsx
+// src/components/pages/WorkerRequestsPage.jsx
 
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
@@ -13,18 +13,14 @@ import {
   Row,
   Col,
   Tag,
-  Avatar,
-  Button,
-  Space,
+  Avatar
 } from 'antd';
 import {
   CarOutlined,
   CalendarOutlined,
   FileTextOutlined,
-  DollarCircleOutlined,
-  ToolOutlined,
+  DollarCircleOutlined
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import 'moment/locale/ru';
 import '../css/WorkerRequestsPage.css';
@@ -38,8 +34,6 @@ const WorkerRequestsPage = () => {
   const [workerFinances, setWorkerFinances] = useState({});
   const [loading, setLoading] = useState(true);
 
-  const navigate = useNavigate();
-
   moment.locale('ru');
 
   useEffect(() => {
@@ -50,11 +44,11 @@ const WorkerRequestsPage = () => {
       }
 
       try {
-        // Получаем активные заявки из коллекции requests
+        // Получаем все заявки, где assignedWorkers содержит currentUser.workerId
+        // Уберите фильтр по статусам, чтобы убедиться, что заявки видны
         const activeQuery = query(
           collection(db, 'requests'),
-          where('assignedWorkers', 'array-contains', currentUser.workerId),
-          where('status', 'in', ['pending', 'new'])
+          where('assignedWorkers', 'array-contains', currentUser.workerId)
         );
         const activeSnapshot = await getDocs(activeQuery);
         const fetchedActiveRequests = activeSnapshot.docs.map((doc) => ({
@@ -65,6 +59,8 @@ const WorkerRequestsPage = () => {
         setActiveRequests(fetchedActiveRequests);
 
         // Получаем финансовые данные для рабочего
+        // Если у вас есть workerId у финансов или другой ключ
+        // Предположим, что в коллекции financials есть поле workerId
         const financesQuery = query(
           collection(db, 'financials'),
           where('workerId', '==', currentUser.workerId)
@@ -116,7 +112,7 @@ const WorkerRequestsPage = () => {
     const workerTotal = Math.floor(netIncome * 0.5);
 
     const perWorkerShare =
-      assignedWorkers.length > 0
+      assignedWorkers && assignedWorkers.length > 0
         ? Math.floor(workerTotal / assignedWorkers.length)
         : 0;
 
@@ -174,44 +170,35 @@ const WorkerRequestsPage = () => {
                           <div className="request-date">
                             <CalendarOutlined />{' '}
                             {request.startDateTime
-                              ? moment(request.startDateTime).format('LL')
+                              ? moment(request.startDateTime.toDate()).format('LL')
                               : 'Дата не указана'}
                           </div>
                         </Col>
                         <Col xs={24} md={6} className="status-col">
                           <Tag color="blue" className="status-tag">
                             {request.status === 'pending'
-                              ? 'В ожидании'
+                              ? 'В сервисе'
                               : request.status === 'new'
                               ? 'Новая'
                               : request.status}
                           </Tag>
-                          <Space style={{ marginTop: '8px' }}>
-                            {perWorkerShare > 0 ? (
-                              <div className="amount-badge">
-                                <DollarCircleOutlined
-                                  style={{
-                                    fontSize: '36px',
-                                    color: '#52c41a',
-                                  }}
-                                />
-                                <Text strong className="amount-text">
-                                  {perWorkerShare} ₽
-                                </Text>
-                              </div>
-                            ) : (
-                              <Text type="secondary">
-                                Ожидаемая выплата не указана
+                          {perWorkerShare > 0 ? (
+                            <div className="amount-badge">
+                              <DollarCircleOutlined
+                                style={{
+                                  fontSize: '36px',
+                                  color: '#52c41a',
+                                }}
+                              />
+                              <Text strong className="amount-text">
+                                {perWorkerShare} ₽
                               </Text>
-                            )}
-
-                            {/* Кнопка перехода к диагностической карте */}
-                            <Button
-                              type="text"
-                              icon={<ToolOutlined style={{ fontSize: '20px', color: '#1890ff' }} />}
-                              onClick={() => navigate(`/requests/${request.id}/diagnostic`)}
-                            />
-                          </Space>
+                            </div>
+                          ) : (
+                            <Text type="secondary">
+                              Ожидаемая выплата не указана
+                            </Text>
+                          )}
                         </Col>
                       </Row>
                     </Card>
