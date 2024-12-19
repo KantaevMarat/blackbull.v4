@@ -213,7 +213,7 @@ const WorkerRequestsPage = () => {
                             <Button
                               type="text"
                               icon={<ToolOutlined style={{ fontSize: '20px', color: '#1890ff' }} />}
-                              onClick={() => navigate(`/requests/${request.id}/diagnostic`)}
+                              onClick={() => navigate(`/request/${request.id}/diagnostic`)}
                               title="Диагностическая карта"
                             />
                           </Space>
