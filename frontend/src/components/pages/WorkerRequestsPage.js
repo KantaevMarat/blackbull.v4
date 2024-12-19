@@ -14,15 +14,19 @@ import {
   Col,
   Tag,
   Avatar,
+  Button,
+  Space
 } from 'antd';
 import {
   CarOutlined,
   CalendarOutlined,
   FileTextOutlined,
   DollarCircleOutlined,
+  ToolOutlined
 } from '@ant-design/icons';
 import moment from 'moment';
 import 'moment/locale/ru';
+import { useNavigate } from 'react-router-dom';
 import '../css/WorkerRequestsPage.css';
 
 const { Content } = Layout;
@@ -34,6 +38,8 @@ const WorkerRequestsPage = () => {
   const [workerFinances, setWorkerFinances] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+  
   moment.locale('ru');
 
   useEffect(() => {
@@ -43,19 +49,14 @@ const WorkerRequestsPage = () => {
         return;
       }
 
-      // Предполагаем, что в assignedWorkers хранится uid рабочего,
-      // значит используем currentUser.uid
       const workerIdentifier = currentUser.uid;
       if (!workerIdentifier) {
-        console.warn('У текущего пользователя нет uid или workerId');
+        console.warn('У текущего пользователя нет uid');
         setLoading(false);
         return;
       }
 
       try {
-        console.log('Current User:', currentUser);
-
-        // Запрашиваем заявки, где assignedWorkers содержит uid рабочего
         const activeQuery = query(
           collection(db, 'requests'),
           where('assignedWorkers', 'array-contains', workerIdentifier)
@@ -66,11 +67,8 @@ const WorkerRequestsPage = () => {
           ...doc.data(),
         }));
 
-        console.log('Fetched Active Requests:', fetchedActiveRequests);
-
         setActiveRequests(fetchedActiveRequests);
 
-        // Получаем финансовые данные для рабочего
         const financesQuery = query(
           collection(db, 'financials'),
           where('workerId', '==', workerIdentifier)
@@ -185,30 +183,40 @@ const WorkerRequestsPage = () => {
                           </div>
                         </Col>
                         <Col xs={24} md={6} className="status-col">
-                          <Tag color="blue" className="status-tag">
-                            {request.status === 'pending'
-                              ? 'В сервисе'
-                              : request.status === 'new'
-                              ? 'Новая'
-                              : request.status}
-                          </Tag>
-                          {perWorkerShare > 0 ? (
-                            <div className="amount-badge">
-                              <DollarCircleOutlined
-                                style={{
-                                  fontSize: '36px',
-                                  color: '#52c41a',
-                                }}
-                              />
-                              <Text strong className="amount-text">
-                                {perWorkerShare} ₽
+                          <Space direction="vertical" style={{ width: '100%' }}>
+                            <Tag color="blue" className="status-tag">
+                              {request.status === 'pending'
+                                ? 'В сервисе'
+                                : request.status === 'new'
+                                ? 'Новая'
+                                : request.status}
+                            </Tag>
+                            {perWorkerShare > 0 ? (
+                              <div className="amount-badge">
+                                <DollarCircleOutlined
+                                  style={{
+                                    fontSize: '36px',
+                                    color: '#52c41a',
+                                  }}
+                                />
+                                <Text strong className="amount-text">
+                                  {perWorkerShare} ₽
+                                </Text>
+                              </div>
+                            ) : (
+                              <Text type="secondary">
+                                Ожидаемая выплата не указана
                               </Text>
-                            </div>
-                          ) : (
-                            <Text type="secondary">
-                              Ожидаемая выплата не указана
-                            </Text>
-                          )}
+                            )}
+
+                            {/* Кнопка перехода на диагностическую карту */}
+                            <Button
+                              type="text"
+                              icon={<ToolOutlined style={{ fontSize: '20px', color: '#1890ff' }} />}
+                              onClick={() => navigate(`/requests/${request.id}/diagnostic`)}
+                              title="Диагностическая карта"
+                            />
+                          </Space>
                         </Col>
                       </Row>
                     </Card>
