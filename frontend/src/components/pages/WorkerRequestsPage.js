@@ -50,15 +50,15 @@ const WorkerRequestsPage = () => {
         return;
       }
 
-      const workerIdentifier = currentUser.uid;
-      if (!workerIdentifier) {
+      const workerUid = currentUser.uid;
+      if (!workerUid) {
         console.warn('У текущего пользователя нет uid');
         setLoading(false);
         return;
       }
 
       try {
-        // Загружаем рабочих
+        // Загружаем всех работников
         const workersSnapshot = await getDocs(collection(db, 'workers'));
         const fetchedWorkers = workersSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -66,10 +66,10 @@ const WorkerRequestsPage = () => {
         }));
         setWorkers(fetchedWorkers);
 
-        // Загружаем заявки, к которым назначен текущий рабочий
+        // Загружаем заявки, где assignedWorkers содержит uid текущего рабочего
         const activeQuery = query(
           collection(db, 'requests'),
-          where('assignedWorkers', 'array-contains', currentUser.workerId) // используем currentUser.workerId, предположим он есть
+          where('assignedWorkers', 'array-contains', workerUid)
         );
         const activeSnapshot = await getDocs(activeQuery);
         const fetchedActiveRequests = activeSnapshot.docs.map((doc) => ({
@@ -79,10 +79,12 @@ const WorkerRequestsPage = () => {
 
         setActiveRequests(fetchedActiveRequests);
 
-        // Загружаем финансовые записи для текущего рабочего
+        // Загружаем финансовые записи, связанные с этим рабочим, если нужно
+        // Если в financials есть поле workerUid, можно фильтровать по нему,
+        // но если такого поля нет, можно пропустить или адаптировать логику.
         const financesQuery = query(
           collection(db, 'financials'),
-          where('workerId', '==', currentUser.workerId) // используем workerId, по аналогии с кодом
+          where('workerUid', '==', workerUid) // используем workerUid, убедитесь что в financials есть такое поле
         );
         const financesSnapshot = await getDocs(financesQuery);
         const fetchedWorkerFinances = financesSnapshot.docs.map((doc) => ({
@@ -113,7 +115,7 @@ const WorkerRequestsPage = () => {
     fetchData();
   }, [currentUser]);
 
-  const calculateWorkerShare = (financials = [], assignedWorkers, currentWorkerId) => {
+  const calculateWorkerShare = (financials = [], assignedWorkersUids, currentWorkerUid) => {
     if (!Array.isArray(financials)) {
       console.error('Ожидается массив financials, но получено: ', financials);
       return 0;
@@ -129,29 +131,23 @@ const WorkerRequestsPage = () => {
 
     const netIncome = totalIncome - totalExpense;
 
-    if (netIncome <= 0 || !assignedWorkers || assignedWorkers.length === 0) {
+    if (netIncome <= 0 || !assignedWorkersUids || assignedWorkersUids.length === 0) {
       return 0;
     }
 
-    // Находим всех назначенных работников
-    const assignedWorkersData = assignedWorkers.map((workerId) =>
-      workers.find((w) => w.id === workerId)
-    ).filter(Boolean); // отфильтровываем тех, кого не нашли
-
-    // Считаем суммарную ставку всех назначенных работников
+    // assignedWorkersUids - массив uid назначенных рабочих
+    const assignedWorkersData = workers.filter((w) => assignedWorkersUids.includes(w.uid));
     const totalWorkerRate = assignedWorkersData.reduce((sum, w) => sum + (w.rate || 0), 0);
 
     if (totalWorkerRate === 0) {
       return 0;
     }
 
-    // Доля текущего рабочего
-    const currentWorker = workers.find((w) => w.id === currentWorkerId);
+    const currentWorker = workers.find((w) => w.uid === currentWorkerUid);
     if (!currentWorker || currentWorker.rate === undefined) {
       return 0;
     }
 
-    // Рассчитываем долю по ставке
     const workerShare = Math.floor((netIncome * currentWorker.rate) / 100);
     return workerShare;
   };
@@ -181,11 +177,11 @@ const WorkerRequestsPage = () => {
               dataSource={activeRequests}
               renderItem={(request) => {
                 const financials = workerFinances[request.id] || [];
-                // Вместо perWorkerShare считаем индивидуальную долю данного рабочего
+                // Расчитываем индивидуальную долю рабочего
                 const workerIndividualShare = calculateWorkerShare(
                   financials,
-                  request.assignedWorkers,
-                  currentUser.workerId // предполагаем что у currentUser есть workerId
+                  request.assignedWorkers, // Массив uids рабочих
+                  currentUser.uid
                 );
 
                 return (
