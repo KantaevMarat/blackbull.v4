@@ -206,7 +206,7 @@ function DiagnosticCardPage() {
               </Button>
             </Col>
             <Col xs={24} sm={12}>
-              <Button type="default" onClick={() => navigate(`/requests/${id}`)} block>
+              <Button type="default" onClick={() => navigate(`/request/${id}`)} block>
                 Отмена
               </Button>
             </Col>
