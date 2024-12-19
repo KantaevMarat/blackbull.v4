@@ -39,7 +39,7 @@ function App() {
               {/* Администраторские страницы */}
               <Route path="/" element={<ProtectedRoute adminOnly><MainPage /></ProtectedRoute>} />
               <Route path="/requests" element={<ProtectedRoute adminOnly><RequestsPage /></ProtectedRoute>} />
-              <Route path="/request/:id" element={<ProtectedRoute adminOnly><RequestDetailsPage /></ProtectedRoute>} />
+              <Route path="/requests/:id" element={<ProtectedRoute adminOnly><RequestDetailsPage /></ProtectedRoute>} />
               <Route path="/request-form" element={<RequestForm />} />
               <Route path="/archived-requests" element={<ProtectedRoute adminOnly><ArchivedRequestsPage /></ProtectedRoute>} />
               <Route path="/archived-requests/:id" element={<ProtectedRoute adminOnly><ArchivedRequestDetailsPage /></ProtectedRoute>} />
