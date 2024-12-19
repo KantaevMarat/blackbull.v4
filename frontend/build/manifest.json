@@ -2,7 +2,7 @@
   "short_name": "Black BULL",
   "name": "TheBlackBULL",
   "description": "Мой Автосервис",
-  "icons": [
+  "icons": [ 
     {
       "src": "image/favicon-72x72.png",
       "type": "image/png",
