@@ -23,7 +23,7 @@ import SettingsPage from './components/pages/SettingsPage';
 import WorkerFinancesPage from './components/pages/WorkerFinancesPage';
 import WorkerRequestsPage from './components/pages/WorkerRequestsPage';
 import ReportPage from './components/pages/ReportPage';
-
+import DiagnosticCardPage from './components/pages/DiagnosticCardPage';
 function App() {
   return (
     <AuthProvider>
