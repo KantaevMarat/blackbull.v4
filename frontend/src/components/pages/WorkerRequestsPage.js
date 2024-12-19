@@ -14,13 +14,17 @@ import {
   Col,
   Tag,
   Avatar,
+  Button,
+  Space,
 } from 'antd';
 import {
   CarOutlined,
   CalendarOutlined,
   FileTextOutlined,
   DollarCircleOutlined,
+  ToolOutlined,
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import 'moment/locale/ru';
 import '../css/WorkerRequestsPage.css';
@@ -34,11 +38,16 @@ const WorkerRequestsPage = () => {
   const [workerFinances, setWorkerFinances] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
   moment.locale('ru');
 
   useEffect(() => {
     const fetchRequests = async () => {
-      if (!currentUser || !currentUser.workerId) return;
+      if (!currentUser || !currentUser.workerId) {
+        setLoading(false);
+        return;
+      }
 
       try {
         // Получаем активные заявки из коллекции requests
@@ -136,7 +145,6 @@ const WorkerRequestsPage = () => {
         >
           {activeRequests.length > 0 ? (
             <List
-              // Удалено свойство grid, чтобы карточки занимали всю ширину
               dataSource={activeRequests}
               renderItem={(request) => {
                 const financials = workerFinances[request.id] || [];
@@ -165,32 +173,45 @@ const WorkerRequestsPage = () => {
                           </Text>
                           <div className="request-date">
                             <CalendarOutlined />{' '}
-                            {moment(request.startDateTime).format('LL')}
+                            {request.startDateTime
+                              ? moment(request.startDateTime).format('LL')
+                              : 'Дата не указана'}
                           </div>
                         </Col>
                         <Col xs={24} md={6} className="status-col">
                           <Tag color="blue" className="status-tag">
                             {request.status === 'pending'
                               ? 'В ожидании'
+                              : request.status === 'new'
+                              ? 'Новая'
                               : request.status}
                           </Tag>
-                          {perWorkerShare > 0 ? (
-                            <div className="amount-badge">
-                              <DollarCircleOutlined
-                                style={{
-                                  fontSize: '36px',
-                                  color: '#52c41a',
-                                }}
-                              />
-                              <Text strong className="amount-text">
-                                {perWorkerShare} ₽
+                          <Space style={{ marginTop: '8px' }}>
+                            {perWorkerShare > 0 ? (
+                              <div className="amount-badge">
+                                <DollarCircleOutlined
+                                  style={{
+                                    fontSize: '36px',
+                                    color: '#52c41a',
+                                  }}
+                                />
+                                <Text strong className="amount-text">
+                                  {perWorkerShare} ₽
+                                </Text>
+                              </div>
+                            ) : (
+                              <Text type="secondary">
+                                Ожидаемая выплата не указана
                               </Text>
-                            </div>
-                          ) : (
-                            <Text type="secondary">
-                              Ожидаемая выплата не указана
-                            </Text>
-                          )}
+                            )}
+
+                            {/* Кнопка перехода к диагностической карте */}
+                            <Button
+                              type="text"
+                              icon={<ToolOutlined style={{ fontSize: '20px', color: '#1890ff' }} />}
+                              onClick={() => navigate(`/requests/${request.id}/diagnostic`)}
+                            />
+                          </Space>
                         </Col>
                       </Row>
                     </Card>
