@@ -51,7 +51,7 @@ function App() {
               <Route path="/settings" element={<ProtectedRoute adminOnly><SettingsPage /></ProtectedRoute>} />
               <Route path="/settings/employees" element={<ProtectedRoute adminOnly><EmployeeManagementPage /></ProtectedRoute>} />
               <Route path="/request/:id/diagnostic" element={<ProtectedRoute adminOrWorker><DiagnosticCardPage /></ProtectedRoute>} />
-              <Route path="/admin-new-request" element={<ProtectedRoute adminOnly><AdminQuickRequestPage /></ProtectedRoute>} />
+              <Route path="/admin-quick-request" element={<ProtectedRoute adminOnly><AdminQuickRequestPage /></ProtectedRoute>} />
 
               {/* Страницы для сотрудников */}
               <Route path="/worker-finances" element={<ProtectedRoute workerOnly><WorkerFinancesPage /></ProtectedRoute>} />

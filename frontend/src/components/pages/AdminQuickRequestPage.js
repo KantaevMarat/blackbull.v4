@@ -256,7 +256,7 @@ const AdminQuickRequestPage = () => {
       setCompanyShare(0);
       setWorkerShares([]);
 
-      // Опционально: navigate('/confirmations') или другое действие
+      navigate('/confirmations');
     } catch (error) {
       console.error('Ошибка при создании заявки:', error);
       toast.error('Не удалось создать заявку.');
