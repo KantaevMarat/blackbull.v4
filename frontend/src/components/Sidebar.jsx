@@ -56,6 +56,7 @@ const Sidebar = () => {
     { key: 'confirmations', icon: <CheckCircleOutlined />, label: <Link to="/confirmations">Подтверждения</Link> },
     { key: 'calculations', icon: <CalculatorOutlined />, label: <Link to="/calculations">Расчётная система</Link> },
     { key: 'employees', icon: <UsergroupAddOutlined />, label: <Link to="/employees">Сотрудники</Link> },
+    { key: 'admin-quick-request', icon: <PlusCircleOutlined />, label: <Link to="/admin-quick-request">Быстрая заявка (confirmation)</Link> },
     { key: 'settings', icon: <SettingOutlined />, label: <Link to="/settings">Настройки</Link> },
     { key: 'logout', icon: <LogoutOutlined />, label: <span onClick={handleLogout}>Выйти</span> },
   ];

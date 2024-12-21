@@ -24,6 +24,7 @@ import WorkerFinancesPage from './components/pages/WorkerFinancesPage';
 import WorkerRequestsPage from './components/pages/WorkerRequestsPage';
 import ReportPage from './components/pages/ReportPage';
 import DiagnosticCardPage from './components/pages/DiagnosticCardPage';
+import AdminQuickRequestPage from './components/pages/AdminQuickRequestPage';
 import { Layout } from 'antd';
 
 const { Content } = Layout;
@@ -50,6 +51,7 @@ function App() {
               <Route path="/settings" element={<ProtectedRoute adminOnly><SettingsPage /></ProtectedRoute>} />
               <Route path="/settings/employees" element={<ProtectedRoute adminOnly><EmployeeManagementPage /></ProtectedRoute>} />
               <Route path="/request/:id/diagnostic" element={<ProtectedRoute adminOrWorker><DiagnosticCardPage /></ProtectedRoute>} />
+              <Route path="/admin-new-request" element={<ProtectedRoute adminOnly><AdminQuickRequestPage /></ProtectedRoute>} />
 
               {/* Страницы для сотрудников */}
               <Route path="/worker-finances" element={<ProtectedRoute workerOnly><WorkerFinancesPage /></ProtectedRoute>} />
