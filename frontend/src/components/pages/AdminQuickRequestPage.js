@@ -1,6 +1,7 @@
 // src/components/pages/AdminQuickRequestPage.jsx
 
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import {
   collection,
@@ -29,7 +30,6 @@ import {
 } from 'antd';
 import moment from 'moment';
 import 'moment/locale/ru';
-import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'antd/dist/reset.css';
@@ -44,38 +44,39 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 /**
- * Админ создает "быструю" заявку:
- * 1) Вводит данные клиента, дату и время (длительность 1 час).
- * 2) Выбирает нескольких работников (Checkbox).
- * 3) Добавляет фин. записи (доходы/расходы).
- * 4) Сразу рассчитываются доли.
- * 5) При нажатии на "Завершить запись" заявка уходит в статус "confirmation".
- *    После этого будет доступна на ConfirmationRequestsPage для окончательного подтверждения/архивирования.
+ * Компонент: AdminQuickRequestPage
+ * 
+ * 1) Заполняется форма клиента (имя, телефон, авто, проблема, дата/время).
+ * 2) Выбираются несколько работников (Checkbox).
+ * 3) Добавляются фин. записи (доходы/расходы).
+ * 4) Отображается расчёт долей (компании и работников).
+ * 5) По кнопке "Завершить запись" создаётся заявка со статусом "confirmation", 
+ *    чтобы далее появиться на ConfirmationRequestsPage.
  */
 
 const AdminQuickRequestPage = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  // Список всех работников
+  // Список всех работников из Firestore (коллекция 'workers')
   const [workers, setWorkers] = useState([]);
-  // id выбранных работников
+  // ID выбранных работников
   const [selectedWorkers, setSelectedWorkers] = useState([]);
 
-  // Массив фин. записей
+  // Массив фин. записей (income/expense)
   const [financials, setFinancials] = useState([]);
-  // Новая запись
+  // Новая фин. запись
   const [newFinancial, setNewFinancial] = useState({
     type: 'income',
     amount: '',
     description: '',
   });
 
-  // Доли
+  // Доли компании и работников
   const [companyShare, setCompanyShare] = useState(0);
   const [workerShares, setWorkerShares] = useState([]);
 
-  // Редактирование ставки работника
+  // Редактирование ставки
   const [editingWorkerId, setEditingWorkerId] = useState(null);
   const [editingWorkerRate, setEditingWorkerRate] = useState(null);
 
@@ -88,7 +89,7 @@ const AdminQuickRequestPage = () => {
           return {
             id: doc.id,
             name: data.name || 'Неизвестно',
-            rate: typeof data.rate === 'number' ? data.rate : 0,
+            rate: typeof data.rate === 'number' ? data.rate : 0
           };
         });
         setWorkers(allWorkers);
@@ -97,11 +98,10 @@ const AdminQuickRequestPage = () => {
         toast.error('Не удалось загрузить список работников.');
       }
     };
-
     fetchWorkers();
   }, []);
 
-  // Пересчитываем доли при изменении financials или selectedWorkers
+  // Пересчитываем доли при изменении фин. записей / списка выбранных работников
   useEffect(() => {
     if (financials.length === 0 || selectedWorkers.length === 0) {
       setCompanyShare(0);
@@ -111,6 +111,7 @@ const AdminQuickRequestPage = () => {
     calculateShares();
   }, [financials, selectedWorkers]);
 
+  // Расчёт долей
   const calculateShares = () => {
     const totalIncome = financials
       .filter((f) => f.type === 'income')
@@ -127,15 +128,15 @@ const AdminQuickRequestPage = () => {
       return;
     }
 
-    // assignedWorkersData
-    const assignedWorkersData = selectedWorkers
+    // Собираем данные о назначенных работниках
+    const assigned = selectedWorkers
       .map((wid) => workers.find((w) => w.id === wid))
       .filter(Boolean);
 
-    const totalRate = assignedWorkersData.reduce((sum, w) => sum + (w.rate || 0), 0);
+    const totalRate = assigned.reduce((sum, w) => sum + (w.rate || 0), 0);
     const compShare = Math.floor((netIncome * (100 - totalRate)) / 100);
 
-    const ws = assignedWorkersData.map((w) => ({
+    const ws = assigned.map((w) => ({
       uid: w.id,
       name: w.name,
       share: Math.floor((netIncome * w.rate) / 100),
@@ -145,14 +146,15 @@ const AdminQuickRequestPage = () => {
     setWorkerShares(ws);
   };
 
-  // Для блока фин. записи
+  // При вводе новой фин. записи
   const handleFinancialChange = (e) => {
     setNewFinancial({ ...newFinancial, [e.target.name]: e.target.value });
   };
-  const handleFinancialTypeChange = (value) => {
-    setNewFinancial({ ...newFinancial, type: value });
+  const handleFinancialTypeChange = (val) => {
+    setNewFinancial({ ...newFinancial, type: val });
   };
 
+  // Кнопка "Добавить запись"
   const handleAddFinancial = () => {
     if (!newFinancial.amount || !newFinancial.description) {
       toast.error('Заполните сумму и описание!');
@@ -165,11 +167,10 @@ const AdminQuickRequestPage = () => {
       date: new Date(),
     };
     setFinancials((prev) => [...prev, record]);
-    // сбрасываем поля
     setNewFinancial({ type: 'income', amount: '', description: '' });
   };
 
-  // Выбираем/снимаем работника
+  // Выбор / отмена выбора работника
   const handleWorkerSelect = (workerId) => {
     let updated = [...selectedWorkers];
     if (updated.includes(workerId)) {
@@ -197,14 +198,14 @@ const AdminQuickRequestPage = () => {
       setEditingWorkerId(null);
       setEditingWorkerRate(null);
 
-      toast.success('Ставка обновлена');
+      toast.success('Ставка успешно обновлена');
     } catch (error) {
       console.error('Ошибка обновления ставки:', error);
-      toast.error('Не удалось обновить ставку');
+      toast.error('Не удалось обновить ставку работника.');
     }
   };
 
-  // При "Завершить запись" -> создаём заявку со статусом "confirmation"
+  // При сабмите всей формы -> создаём заявку со статусом "confirmation"
   const handleFinish = async (values) => {
     try {
       const { date, time } = values;
@@ -213,10 +214,9 @@ const AdminQuickRequestPage = () => {
         return;
       }
       const startDateTime = combineDateTime(date, time);
-      // endDateTime на 1 час
       const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000);
 
-      // Создаем документ в requests
+      // Создаём документ заявки
       const requestData = {
         userName: values.userName,
         phone: values.phone || 'Не указан',
@@ -226,15 +226,17 @@ const AdminQuickRequestPage = () => {
         startDateTime: Timestamp.fromDate(startDateTime),
         endDateTime: Timestamp.fromDate(endDateTime),
         status: 'confirmation',
-        assignedWorkers: selectedWorkers,
+        assignedWorkers: selectedWorkers, 
         companyShare,
         workerShares,
         createdAt: Timestamp.now(),
       };
+
+      // Сохраняем заявку
       const docRef = await addDoc(collection(db, 'requests'), requestData);
       const requestId = docRef.id;
 
-      // Сохраняем фин. записи
+      // Сохраняем financials
       for (const f of financials) {
         await addDoc(collection(db, 'financials'), {
           requestId,
@@ -245,20 +247,23 @@ const AdminQuickRequestPage = () => {
         });
       }
 
-      toast.success('Заявка отправлена на подтверждение!', { autoClose: 3000 });
+      toast.success('Заявка успешно создана и отправлена на подтверждение!', {
+        autoClose: 3000
+      });
       form.resetFields();
       setFinancials([]);
       setSelectedWorkers([]);
       setCompanyShare(0);
       setWorkerShares([]);
 
-      // По желанию — navigate('/confirmations')
+      // Опционально: navigate('/confirmations') или другое действие
     } catch (error) {
-      console.error('Ошибка создания заявки:', error);
-      toast.error('Не удалось создать заявку');
+      console.error('Ошибка при создании заявки:', error);
+      toast.error('Не удалось создать заявку.');
     }
   };
 
+  // Утилита объединения даты + времени
   const combineDateTime = (dateMoment, timeMoment) => {
     const year = dateMoment.year();
     const month = dateMoment.month();
@@ -274,7 +279,7 @@ const AdminQuickRequestPage = () => {
     <div style={{ padding: 16 }}>
       <ToastContainer />
       <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>
-        Быстрая заявка (сразу "confirmation")
+        Быстрая заявка (статус = confirmation)
       </Title>
       <Form 
         form={form} 
@@ -288,12 +293,12 @@ const AdminQuickRequestPage = () => {
               <Form.Item
                 label="Имя клиента"
                 name="userName"
-                rules={[{ required: true, message: 'Введите имя' }]}
+                rules={[{ required: true, message: 'Введите имя клиента' }]}
               >
                 <Input placeholder="Имя клиента" />
               </Form.Item>
               <Form.Item label="Телефон" name="phone">
-                <Input placeholder="Телефон (необязательно)" />
+                <Input placeholder="Необязательно" />
               </Form.Item>
               <Form.Item
                 label="Модель авто"
@@ -303,9 +308,9 @@ const AdminQuickRequestPage = () => {
                 <Input />
               </Form.Item>
               <Form.Item
-                label="Год авто"
+                label="Год выпуска"
                 name="carYear"
-                rules={[{ required: true, message: 'Введите год авто' }]}
+                rules={[{ required: true, message: 'Введите год выпуска' }]}
               >
                 <Input />
               </Form.Item>
@@ -322,22 +327,28 @@ const AdminQuickRequestPage = () => {
           <Col xs={24} md={12}>
             <Card title="Дата и время" bordered={false}>
               <Row gutter={[16, 16]}>
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     label="Дата"
                     name="date"
                     rules={[{ required: true, message: 'Укажите дату' }]}
                   >
-                    <DatePicker format="DD.MM.YYYY" style={{ width: '100%' }} />
+                    <DatePicker 
+                      format="DD.MM.YYYY" 
+                      style={{ width: '100%' }}
+                    />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item
                     label="Время"
                     name="time"
                     rules={[{ required: true, message: 'Укажите время' }]}
                   >
-                    <TimePicker format="HH:mm" style={{ width: '100%' }} />
+                    <TimePicker
+                      format="HH:mm"
+                      style={{ width: '100%' }}
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -409,11 +420,11 @@ const AdminQuickRequestPage = () => {
           <Col xs={24} md={12}>
             <Card title="Финансовые записи" bordered={false}>
               <Space direction="vertical" style={{ width: '100%' }}>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <Select
                     value={newFinancial.type}
                     onChange={handleFinancialTypeChange}
-                    style={{ width: '100px' }}
+                    style={{ width: '110px' }}
                   >
                     <Option value="income">Доход</Option>
                     <Option value="expense">Расход</Option>
@@ -424,16 +435,17 @@ const AdminQuickRequestPage = () => {
                     name="amount"
                     value={newFinancial.amount}
                     onChange={handleFinancialChange}
-                    style={{ width: '120px' }}
+                    style={{ width: '100px' }}
                   />
                   <Input
                     placeholder="Описание"
                     name="description"
                     value={newFinancial.description}
                     onChange={handleFinancialChange}
+                    style={{ flex: 1 }}
                   />
                   <Button 
-                    icon={<PlusOutlined />}
+                    icon={<PlusOutlined />} 
                     onClick={handleAddFinancial}
                   >
                     Добавить
@@ -468,7 +480,7 @@ const AdminQuickRequestPage = () => {
                   <Tag color="blue">{companyShare} ₽</Tag>
                 </Space>
                 <Space>
-                  <Text strong>Доли рабочих:</Text>
+                  <Text strong>Доли работников:</Text>
                   {workerShares.map((ws) => (
                     <Tag color="green" key={ws.uid}>
                       {ws.name}: {ws.share} ₽
@@ -489,7 +501,7 @@ const AdminQuickRequestPage = () => {
                 htmlType="submit"
                 block
               >
-                Завершить запись (status = confirmation)
+                Завершить запись (статус = confirmation)
               </Button>
             </Form.Item>
           </Col>
